@@ -2,7 +2,11 @@ Memory management every engineer need to know!
 ==============================================
 
 ## Prepare reading
-relevant reading:[Anatomy of a Program in Memory](http://duartes.org/gustavo/blog/post/anatomy-of-a-program-in-memory/)<br>
+relevant reading:
+ - [Anatomy of a Program in Memory](http://duartes.org/gustavo/blog/post/anatomy-of-a-program-in-memory/)<br>
+ - [How the Kernel Manages Your Memory](http://duartes.org/gustavo/blog/post/how-the-kernel-manages-your-memory/)<br>
+ <br>
+
 &emsp;&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/memory_management/kernelUserMemorySplit.png"></img><br>
 系统启动，资源load进`physical memory`，对于32位系统来说，每个进程启动都会拥有一块4G大小的`virtual memory`。我是一个叫`Nerd`的进程，启动的时候kernel给我这个玩意儿，告诉我我能使用的`User Mode Space`只有3G，然后从`0xc0000000`到`0xffffffff`是内核地址，你别动它，你没权限。`physical memory`和`virtual memory`的关系就是：`physical memory`是以PAGE的形式Map到`virtual memory`，kernel管理着所有的`page_table`,所以你程序启动过多的时候`physical memory`会吃紧，`virtual memory`依然是4G。使用`top -p <pid>`查看进程的`resident memory`就是进程实际吃掉的`physical memory`，在检查`memory leak`的时候非常有用。(TIP:对于纯C程序来说，开启`mtrace()`,即可统计内存泄漏情况，或者自己用`__malloc_hook`之类的实现内存检测)。总的来说，`virtual memory`只是kernel开给每个进程的一张货币而已，`physical memory`分配过多必然会引发通货膨胀,然后发给我`Nerd`进程的货币就贬值了，无所谓啦，我是个`Nerd`。<br>
 <br>
