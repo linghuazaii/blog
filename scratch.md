@@ -3,6 +3,9 @@ Memory management every engineer need to know!
 
 ## Prepare reading
 &ensp;test
+&thinsp;test2
+&emsp;test3
+&#09;test4
 For 0x08048000 in 32x and 0x00400000 in 64x system
 32x:
 `cat /proc/self/maps`
