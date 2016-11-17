@@ -59,5 +59,15 @@ ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsysca
 ```
 `libc`和`ld`被`map`到了堆内存，`0x00400000`以下的地址可能有东西，也可能没东西，你同样可以`map`你想要的东西到这块内存。<br>
 更加细心的读者可能要问：为什么要有`random brk offset`,`random stack offset`和`random mmap offset`?这是为了避免直接算得某个进程的`virtual memory`详细地址，然后可以利用这个远程`PWN`(反正我不会，大牛可以教教我^_^)。<br>
+<br>
+
+&emsp;&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/memory_management/mappingBinaryImage.png"></img><br>
+这个图是更加详细的解释，`const char *msg="I am a nerd!"`,`msg`会存在`DATA`段，`"I am a nerd!"`存在`TEXT`段，是只读的。可执行文件大小 = `TEXT` + `DATA`！<br>
+<br>
+
+&emsp;&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/memory_management/linuxClassicAddressSpaceLayout.png"></img><br>
+这个是经典的没有各种`offset`的`virtual memory` layout。<br>
+<br>
+
 
 
