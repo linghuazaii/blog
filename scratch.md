@@ -73,5 +73,8 @@ ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsysca
 这个是经典的没有各种`offset`的`virtual memory` layout。<br>
 <br>
 
-
+&emsp;&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/memory_management/mm_struct.png"></img><br>
+<br>
+&emsp;&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/memory_management/memoryDescriptorAndMemoryAreas.png"></img><br>
+我就不解释了，不会kernel，详情自己看[relevant reading: How the Kernel Manages Your Memory](#relevant-reading)
 
