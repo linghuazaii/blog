@@ -195,7 +195,7 @@ int main(int argc, char **argv) {
 
 **关于realloc**<br>
  - `realloc`嘛，自己`man realloc`吧，就是`malloc + memcpy`，但是此`memcpy`非彼`memcpy`，此`memcpy`是通过宏定义来实现的，代码如下：<br>
- ```
+```
 #define MALLOC_COPY(dest,src,nbytes)                                          \
 do {                                                                          \
   INTERNAL_SIZE_T* mcsrc = (INTERNAL_SIZE_T*) src;                            \
