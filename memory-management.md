@@ -158,7 +158,7 @@ static struct malloc_state av_;
 <br>
 
 **关于malloc**<br>
- - 如果`malloc`申请内存大小超过`M_MMAP_THRESHOLD`即`128 * 1024`并且`free list`里没有满足需要的内存大小，`malloc`就会调用`mmap`申请内存。因为有一个`header`，所以大小为`128 * 1024 - 32`，具体信息可以`man mallopt`，我就不贴`dlmalloc`的源码了，感兴趣可以自己去翻。**example:(strace跟踪系统调用)**<br>
+ - 当你调用`malloc`时，`dlmalloc`首先确定`mstate.fastbins`和`mstate.bins`有没有满足需求的内存块大小，有就可以直接使用。如果`malloc`申请内存大小超过`M_MMAP_THRESHOLD`即`128 * 1024`并且`free list`里没有满足需要的内存大小，`malloc`就会调用`mmap`申请内存。因为有一个`header`，所以大小为`128 * 1024 - 32`，具体信息可以`man mallopt`，我就不贴`dlmalloc`的源码了，感兴趣可以自己去翻。**example:(strace跟踪系统调用)**<br>
 ```
 int main(int argc, char **argv) {
     void *mem = malloc(1024 * 128 - 24);
@@ -185,4 +185,66 @@ int main(int argc, char **argv) {
 为什么是24而不是`sizeof(malloc_chunk)`，我猜`glibc`修改了`dlmalloc`实现，因为我看到的`dlmalloc`源码不是这样子的。<br>
 <br>
 
+**关于malloc_trim**<br>
+ - `malloc_trim`用来归还申请的内存给系统，但是只归还通过`brk`申请的内存块，归还大小为`N * PAGE_SZIE`，一般linux的`PAGE_SIZE`为4096Bytes，详情可以`man getpagesize`。<br>
+<br>
 
+**关于free**<br>
+ - `free`归还通过`brk`申请的内存到`mstate.fastbin`，如果`free`的内存是通过`brk`申请的并且其大小超过了`FASTBIN_CONSOLIDATION_THRESHOLD`即`DEFAULT_TRIM_THRESHOLD >> 1`即`256 * 1024 / 2`即`128K`，那么这块内存会通过`brk`缩减`program break`的方式直接归还给系统，`mmap`申请的内存直接通过`munmap`归还给系统。<br>
+<br>
+
+**关于realloc**<br>
+ - `realloc`嘛，自己`man realloc`吧，就是`malloc + memcpy`，但是此`memcpy`非彼`memcpy`，此`memcpy`是通过宏定义来实现的，代码如下：<br>
+ ```
+#define MALLOC_COPY(dest,src,nbytes)                                          \
+do {                                                                          \
+  INTERNAL_SIZE_T* mcsrc = (INTERNAL_SIZE_T*) src;                            \
+  INTERNAL_SIZE_T* mcdst = (INTERNAL_SIZE_T*) dest;                           \
+  CHUNK_SIZE_T  mctmp = (nbytes)/sizeof(INTERNAL_SIZE_T);                     \
+  long mcn;                                                                   \
+  if (mctmp < 8) mcn = 0; else { mcn = (mctmp-1)/8; mctmp %= 8; }             \
+  switch (mctmp) {                                                            \
+    case 0: for(;;) { *mcdst++ = *mcsrc++;                                    \
+    case 7:           *mcdst++ = *mcsrc++;                                    \
+    case 6:           *mcdst++ = *mcsrc++;                                    \
+    case 5:           *mcdst++ = *mcsrc++;                                    \
+    case 4:           *mcdst++ = *mcsrc++;                                    \
+    case 3:           *mcdst++ = *mcsrc++;                                    \
+    case 2:           *mcdst++ = *mcsrc++;                                    \
+    case 1:           *mcdst++ = *mcsrc++; if(mcn <= 0) break; mcn--; }       \
+  }                                                                           \
+} while(0)
+```
+<br>
+
+**关于memalign**<br>
+ - 不太看得懂，略过吧，反正是通过位运算实现的。<br>
+<br>
+
+**关于calloc**<br>
+ - `calloc`先调用`malloc`，然后调用`memset`，但是此`memset`非彼`memset`，此`memset`是通过宏定义实现的，代码如下：<br>
+```
+#define MALLOC_ZERO(charp, nbytes)                                            \
+do {                                                                          \
+  INTERNAL_SIZE_T* mzp = (INTERNAL_SIZE_T*)(charp);                           \
+  CHUNK_SIZE_T  mctmp = (nbytes)/sizeof(INTERNAL_SIZE_T);                     \
+  long mcn;                                                                   \
+  if (mctmp < 8) mcn = 0; else { mcn = (mctmp-1)/8; mctmp %= 8; }             \
+  switch (mctmp) {                                                            \
+    case 0: for(;;) { *mzp++ = 0;                                             \
+    case 7:           *mzp++ = 0;                                             \
+    case 6:           *mzp++ = 0;                                             \
+    case 5:           *mzp++ = 0;                                             \
+    case 4:           *mzp++ = 0;                                             \
+    case 3:           *mzp++ = 0;                                             \
+    case 2:           *mzp++ = 0;                                             \
+    case 1:           *mzp++ = 0; if(mcn <= 0) break; mcn--; }                \
+  }                                                                           \
+} while(0)
+```
+说实话，这个我没看太懂。<br>
+<br>
+
+**结语**<br>
+ - 就到这里吧，大家有什么感兴趣的想学的东西可以发邮件到我的email：[charles.cn.bj@gmail.com](charles.cn.bj@gmail.com)
+ - Google有自己的`tcmalloc`，GNU有自己通过`ptmalloc`改编的`malloc`，市面上还有`jemalloc`等等其他的`memory allocator`，写完这篇，我也要去写个`charles_malloc`了，Byebye……
