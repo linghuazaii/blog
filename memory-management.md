@@ -84,4 +84,33 @@ ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsysca
  - `glibc`内存管理基于`ptmalloc`,`ptmalloc`基于`dlmalloc`
  - `dlmalloc`源码：[dlmalloc](https://github.com/linghuazaii/dlmalloc)
  - `ptmalloc`源码：[ptmalloc](http://www.malloc.de/malloc/ptmalloc3-current.tar.gz)
- - To be continued ...
+<br><br>
+```
+struct malloc_chunk {
+
+  INTERNAL_SIZE_T      prev_size;  /* Size of previous chunk (if free).  */
+  INTERNAL_SIZE_T      size;       /* Size in bytes, including overhead. */
+
+  struct malloc_chunk* fd;         /* double links -- used only if free. */
+  struct malloc_chunk* bk;
+};
+```
+`dlmalloc`使用`malloc_chunk`结构体存储每块申请的内存的具体信息，在32位系统里`sizeof(malloc_chunk) = 16`，在64位系统里`sizeof(malloc_chunk) = 32`，**example:**<br>
+```
+int main(int argc, char **argv) {
+    void *mem = malloc(0);
+    malloc_stats();
+
+    return 0;
+}
+```
+我的机器是64位的，调用`malloc(0)`其实也申请了内存，这块内存空间大小就是`sizeof(malloc_chunk) = 32`，运行以上代码将显示如下结果:<br>
+> Arena 0:
+> system bytes     =     135168
+> **in use bytes     =         32**
+> Total (incl. mmap):
+> system bytes     =     135168
+> in use bytes     =         32
+> max mmap regions =          0
+> max mmap bytes   =          0
+
