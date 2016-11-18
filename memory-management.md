@@ -180,7 +180,7 @@ int main(int argc, char **argv) {
 }
 ```
 编译以上代码，`strace`结果：<br>
-> mmap(NULL, 135168, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f65339a6000<br><br>  
+> mmap(NULL, 135168, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f65339a6000<br>  
 
 为什么是24而不是`sizeof(malloc_chunk)`，我猜`glibc`修改了`dlmalloc`实现，因为我看到的`dlmalloc`源码不是这样子的。<br>
 <br>
