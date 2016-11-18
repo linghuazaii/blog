@@ -112,6 +112,6 @@ int main(int argc, char **argv) {
 > system bytes     =     135168<br>
 > in use bytes     =         32<br>
 > max mmap regions =          0<br>
-> max mmap bytes   =          0<br>
+> max mmap bytes   =          0
 <br>
 
