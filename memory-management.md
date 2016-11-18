@@ -112,8 +112,8 @@ int main(int argc, char **argv) {
 > system bytes     =     135168<br>
 > in use bytes     =         32<br>
 > max mmap regions =          0<br>
-> max mmap bytes   =          0
-<br>
+> max mmap bytes   =          0<br>  
+
 所以，你申请的内存看上去是这样子的。<br>
 &emsp;&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/memory_management/malloc_chunk.png"></img><br><br>
 
@@ -169,8 +169,8 @@ int main(int argc, char **argv) {
 ```
 编译以上代码，`strace`结果：<br>
 > brk(0)                                  = 0xa2c000<br>
-> brk(0xa6d000)                           = 0xa6d000<br>
-<br>
+> brk(0xa6d000)                           = 0xa6d000<br>  
+
 ```
 int main(int argc, char **argv) {
     void *mem = malloc(1024 * 128 - 24 + 1);
@@ -180,7 +180,8 @@ int main(int argc, char **argv) {
 }
 ```
 编译以上代码，`strace`结果：<br>
-> mmap(NULL, 135168, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f65339a6000<br><br>
+> mmap(NULL, 135168, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f65339a6000<br><br>  
+
 为什么是24而不是`sizeof(malloc_chunk)`，我猜`glibc`修改了`dlmalloc`实现，因为我看到的`dlmalloc`源码不是这样子的。<br>
 <br>
 
