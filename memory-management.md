@@ -105,12 +105,13 @@ int main(int argc, char **argv) {
 }
 ```
 我的机器是64位的，调用`malloc(0)`其实也申请了内存，这块内存空间大小就是`sizeof(malloc_chunk) = 32`，运行以上代码将显示如下结果:<br>
-> Arena 0:
-> system bytes     =     135168
-> **in use bytes     =         32**
-> Total (incl. mmap):
-> system bytes     =     135168
-> in use bytes     =         32
-> max mmap regions =          0
-> max mmap bytes   =          0
+> Arena 0:<br>
+> system bytes     =     135168<br>
+> **in use bytes     =         32**<br>
+> Total (incl. mmap):<br>
+> system bytes     =     135168<br>
+> in use bytes     =         32<br>
+> max mmap regions =          0<br>
+> max mmap bytes   =          0<br>
+<br>
 
