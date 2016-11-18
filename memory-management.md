@@ -114,4 +114,74 @@ int main(int argc, char **argv) {
 > max mmap regions =          0<br>
 > max mmap bytes   =          0
 <br>
+所以，你申请的内存看上去是这样子的。<br>
+&emsp;&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/memory_management/malloc_chunk.png"></img><br><br>
+
+```
+struct malloc_state {
+  /* The maximum chunk size to be eligible for fastbin */
+  INTERNAL_SIZE_T  max_fast;   /* low 2 bits used as flags */
+  /* Fastbins */
+  mfastbinptr      fastbins[NFASTBINS];
+  /* Base of the topmost chunk -- not otherwise kept in a bin */
+  mchunkptr        top;
+  /* The remainder from the most recent split of a small request */
+  mchunkptr        last_remainder;
+  /* Normal bins packed as described above */
+  mchunkptr        bins[NBINS * 2];
+  /* Bitmap of bins. Trailing zero map handles cases of largest binned size */
+  unsigned int     binmap[BINMAPSIZE+1];
+  /* Tunable parameters */
+  CHUNK_SIZE_T     trim_threshold;
+  INTERNAL_SIZE_T  top_pad;
+  INTERNAL_SIZE_T  mmap_threshold;
+  /* Memory map support */
+  int              n_mmaps;
+  int              n_mmaps_max;
+  int              max_n_mmaps;
+  /* Cache malloc_getpagesize */
+  unsigned int     pagesize;
+  /* Track properties of MORECORE */
+  unsigned int     morecore_properties;
+  /* Statistics */
+  INTERNAL_SIZE_T  mmapped_mem;
+  INTERNAL_SIZE_T  sbrked_mem;
+  INTERNAL_SIZE_T  max_sbrked_mem;
+  INTERNAL_SIZE_T  max_mmapped_mem;
+  INTERNAL_SIZE_T  max_total_mem;
+};
+
+typedef struct malloc_state *mstate;
+static struct malloc_state av_;
+```
+这个名叫`av_`的结构体就是用来存储内存申请的具体信息的，无论是`brk`的也好，还是`mmap`的也好，都会记录在案。<br>
+<br>
+
+**关于malloc**<br>
+ - 如果`malloc`申请内存大小超过`M_MMAP_THRESHOLD`即`128 * 1024`并且`free list`里没有满足需要的内存大小，`malloc`就会调用`mmap`申请内存。因为有一个`header`，所以大小为`128 * 1024 - 32`，具体信息可以`man mallopt`，我就不贴`dlmalloc`的源码了，感兴趣可以自己去翻。**example:(strace跟踪系统调用)**<br>
+```
+int main(int argc, char **argv) {
+    void *mem = malloc(1024 * 128 - 24);
+    malloc_stats();
+
+    return 0;
+}
+```
+编译以上代码，`strace`结果：<br>
+> brk(0)                                  = 0xa2c000<br>
+> brk(0xa6d000)                           = 0xa6d000<br>
+<br>
+```
+int main(int argc, char **argv) {
+    void *mem = malloc(1024 * 128 - 24 + 1);
+    malloc_stats();
+
+    return 0;
+}
+```
+编译以上代码，`strace`结果：<br>
+> mmap(NULL, 135168, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f65339a6000<br><br>
+为什么是24而不是`sizeof(malloc_chunk)`，我猜`glibc`修改了`dlmalloc`实现，因为我看到的`dlmalloc`源码不是这样子的。<br>
+<br>
+
 
