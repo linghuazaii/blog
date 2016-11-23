@@ -53,6 +53,7 @@ zoneinfo
 
 
  - `/proc/loadavg`: `0.24 0.33 0.46 2/847 25053`，前三列表示最后1分钟，5分钟，15分钟`CPU`和`IO`的利用率，第四列表示当前运行的`进程数/总进程数`，第五列表示最后一个用过的`进程ID`。
+
  - `/proc/buddyinfo`:
 ```
 Node 0, zone      DMA      0      0      0      1      2      1      1      0      1      1      3
@@ -74,6 +75,17 @@ blkio          0               1               1
 perf_event     0               1               1
 hugetlb        0               1               1
 ```
-四列分别表示`controller name`，`hierarchy`全0表示所有`controller`挂载在`cgroups v2 single unified hierarchy`，`num_cgroups`表示有多少个`control groups`挂载在这个`controller`上，`enabled`表示`controller`状态。
+四列分别表示`controller name`，`hierarchy`全0表示所有`controller`挂载在`cgroups v2 single unified hierarchy`，`num_cgroups`表示有多少个`control groups`挂载在这个`controller`上，`enabled`表示`controller`状态。(relevant reading: [cgroups](http://man7.org/linux/man-pages/man7/cgroups.7.html))
 
+ - `/proc/cmdline`:
+```
+root=LABEL=/ console=ttyS0 LANG=en_US.UTF-8 KEYTABLE=us
+```
+表示`kernel`启动的时候传给`kernel`的参数。
+
+ - `/proc/consoles`:
+```
+ttyS0                -W- (EC p a)    4:64
+```
+所连接的`consoles`，`ttyS0`表示`device name`，`W`表示可写，`EC p a`分别表示`Enabled``Preferred console``used for printk buffer``safe to use when cpu is offline`。(relevant reading: [/proc/consoles](https://www.kernel.org/doc/Documentation/filesystems/proc.txt))
 
