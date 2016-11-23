@@ -60,3 +60,20 @@ Node 0, zone    DMA32  43388  23561  21073   4093    683    154      7      2   
 Node 0, zone   Normal 235635 106198  20708     50      0      0      0      0      0      1      0
 ```
 `Node 0`表示只有一个`NUMA Node`，`zone DMA`有`16MB`内存，从低地址开始，被一些`legacy devices`使用；`zone DMA32`存在于64位机器，表示低地址开始`4GB`的内存；`zone Normal`在64位机器上表示从`4GB`开始的内存。其余几列的固定大小的内存块数目(relevant reading: [buddy algorithm](https://www.cs.fsu.edu/~engelen/courses/COP402003/p827.pdf))，分别为`free`状态的`4KB 8KB 16KB 32KB 64KB 128KB 256KB 512KB 1MB 2MB 4MB`内存块数目，Eg. `DMA Zone`有`32KB + 2 * 64KB + 128KB + 256KB + 1MB + 2MB + 3 * 4MB = 15MB544KB`处在`free`状态的内存块，这个数据可以用来查内存碎片情况。
+ - `/proc/cgroups`
+```
+subsys_name    hierarchy       num_cgroups     enabled
+cpuset         0               1               1
+cpu            0               1               1
+cpuacct        0               1               1
+memory         0               1               1
+devices        0               1               1
+freezer        0               1               1
+net_cls        0               1               1
+blkio          0               1               1
+perf_event     0               1               1
+hugetlb        0               1               1
+```
+四列分别表示`controller name`，`hierarchy`全0表示所有`controller`挂载在`cgroups v2 single unified hierarchy`，`num_cgroups`表示有多少个`control groups`挂载在这个`controller`上，`enabled`表示`controller`状态。
+
+
