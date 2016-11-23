@@ -89,3 +89,88 @@ ttyS0                -W- (EC p a)    4:64
 ```
 所连接的`consoles`，`ttyS0`表示`device name`，`W`表示可写，`EC p a`分别表示`Enabled``Preferred console``used for printk buffer``safe to use when cpu is offline`，`4:64`表示`major number:minor number`。(relevant reading: [/proc/consoles](https://www.kernel.org/doc/Documentation/filesystems/proc.txt))
 
+ - `/proc/cpuinfo`:
+```
+processor       : 0
+vendor_id       : GenuineIntel
+cpu family      : 6
+model           : 63
+model name      : Intel(R) Xeon(R) CPU E5-2676 v3 @ 2.40GHz
+stepping        : 2
+microcode       : 0x25
+cpu MHz         : 2400.058
+cache size      : 30720 KB
+physical id     : 0
+siblings        : 4
+core id         : 0
+cpu cores       : 2
+apicid          : 0
+initial apicid  : 0
+fpu             : yes
+fpu_exception   : yes
+cpuid level     : 13
+wp              : yes
+flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology eagerfpu pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm xsaveopt fsgsbase bmi1 avx2 smep bmi2 erms invpcid
+bogomips        : 4800.11
+clflush size    : 64
+cache_alignment : 64
+address sizes   : 46 bits physical, 48 bits virtual
+power management:
+```
+`cpu family`、`model`、`stepping`表示`cpu`架构类型区分，`microcode`记录更新的版本号或者类似的信息，`cache size`表示`cpu L2 cache`的大小，这里为`30M`，`physical id``processor``cpu cores``siblings``core id`表示只有一块物理`cpu`，但是有四个`processor`，可以同时运行四个`hyperthreads`在`0-2 core`上，`flags`表示该`cpu`的特性，`bogomips`表示每秒百万次级别衡量`cpu`什么也不做的情况，`cache_alignment`应该表示是`64bit`对齐的，即`8bytes`，具体没Google到，`address sizes`表示地址总线数，`46 bits physical`表示最大支持内存为`2 ^ 46bytes = 65536GB`，`48 bits virtual`表示`virtual memory`寻址总线数，最大支持的`virtual memory`内存大小为`2 ^ 48bytes = 262144GB`。
+
+ - `/proc/crypto`:
+```
+name         : ecb(arc4)
+driver       : ecb(arc4-generic)
+module       : ecb
+priority     : 0
+refcnt       : 1
+selftest     : passed
+type         : blkcipher
+blocksize    : 1
+min keysize  : 1
+max keysize  : 256
+ivsize       : 0
+geniv        : <default>
+```
+表示`kernel`支持的加密算法。
+
+ - `/proc/devices`:
+```
+Character devices:
+  1 mem
+  4 /dev/vc/0
+  4 tty
+  4 ttyS
+  5 /dev/tty
+  5 /dev/console
+  5 /dev/ptmx
+  7 vcs
+ 10 misc
+ 13 input
+108 ppp
+128 ptm
+136 pts
+202 cpu/msr
+203 cpu/cpuid
+253 hidraw
+254 bsg
+
+Block devices:
+259 blkext
+  9 md
+202 xvd
+253 device-mapper
+254 mdp
+```
+表示系统挂载的设备，以`Character device`和`Block device`区分，区别见[/proc/devices](https://www.centos.org/docs/5/html/5.1/Deployment_Guide/s2-proc-devices.html)
+
+ - `/proc/diskstats`:
+```
+202 0 xvda 14461686 42539668 1278044167 78747120 281646345 132327060 17709904384 2309947396 0 124008400 2388329900
+202 1 xvda1 14461153 42539028 1278039312 78746860 281646343 132327052 17709904304 2309947396 0 124008176 2388340472
+```
+表示`block device`的`I/O`状态，各列分别表示`major number`,`minor number`,`device name`,`read成功次数`,`read merge次数`,`sectors read次数`,`reading总耗时(ms)`,`write成功次数`,`write merge次数`,`sector write次数`,`write总耗时(ms)`,`当前正在处理的I/O个数`,`I/O总耗时(ms)`,`I/O加权总耗时(ms)`。
+
+
