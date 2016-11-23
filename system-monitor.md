@@ -87,5 +87,5 @@ root=LABEL=/ console=ttyS0 LANG=en_US.UTF-8 KEYTABLE=us
 ```
 ttyS0                -W- (EC p a)    4:64
 ```
-所连接的`consoles`，`ttyS0`表示`device name`，`W`表示可写，`EC p a`分别表示`Enabled``Preferred console``used for printk buffer``safe to use when cpu is offline`。(relevant reading: [/proc/consoles](https://www.kernel.org/doc/Documentation/filesystems/proc.txt))
+所连接的`consoles`，`ttyS0`表示`device name`，`W`表示可写，`EC p a`分别表示`Enabled``Preferred console``used for printk buffer``safe to use when cpu is offline`，`4:64`表示`major number:minor number`。(relevant reading: [/proc/consoles](https://www.kernel.org/doc/Documentation/filesystems/proc.txt))
 
