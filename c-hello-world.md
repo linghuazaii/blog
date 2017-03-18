@@ -93,48 +93,7 @@ int main(int argc, char **argv) {
 <br>
 &emsp;&emsp;C语言版本够简单把，才这几行～ 我们看看符号表，`readelf -s a.out`  
 <br>
-```
-Symbol table '.symtab' contains 69 entries:
-   Num:    Value          Size Type    Bind   Vis      Ndx Name
-     0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND
-    32: 0000000000000000     0 SECTION LOCAL  DEFAULT   32
-    33: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS crtstuff.c
-    34: 0000000000600e20     0 OBJECT  LOCAL  DEFAULT   21 __JCR_LIST__
-    35: 0000000000400460     0 FUNC    LOCAL  DEFAULT   14 deregister_tm_clones
-    36: 0000000000400490     0 FUNC    LOCAL  DEFAULT   14 register_tm_clones
-    37: 00000000004004d0     0 FUNC    LOCAL  DEFAULT   14 __do_global_dtors_aux
-    38: 000000000060102c     1 OBJECT  LOCAL  DEFAULT   26 completed.6337
-    39: 0000000000600e18     0 OBJECT  LOCAL  DEFAULT   20 __do_global_dtors_aux_fin
-    40: 00000000004004f0     0 FUNC    LOCAL  DEFAULT   14 frame_dummy
-    41: 0000000000600e10     0 OBJECT  LOCAL  DEFAULT   19 __frame_dummy_init_array_
-    42: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS h.c
-    43: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS crtstuff.c
-    44: 0000000000400718     0 OBJECT  LOCAL  DEFAULT   18 __FRAME_END__
-    45: 0000000000600e20     0 OBJECT  LOCAL  DEFAULT   21 __JCR_END__
-    46: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS
-    47: 0000000000600e18     0 NOTYPE  LOCAL  DEFAULT   19 __init_array_end
-    48: 0000000000600e28     0 OBJECT  LOCAL  DEFAULT   22 _DYNAMIC
-    49: 0000000000600e10     0 NOTYPE  LOCAL  DEFAULT   19 __init_array_start
-    50: 00000000004005f0     0 NOTYPE  LOCAL  DEFAULT   17 __GNU_EH_FRAME_HDR
-    51: 0000000000601000     0 OBJECT  LOCAL  DEFAULT   24 _GLOBAL_OFFSET_TABLE_
-    52: 00000000004005c0     2 FUNC    GLOBAL DEFAULT   14 __libc_csu_fini
-    53: 0000000000601028     0 NOTYPE  WEAK   DEFAULT   25 data_start
-    54: 000000000060102c     0 NOTYPE  GLOBAL DEFAULT   25 _edata
-    55: 00000000004005c4     0 FUNC    GLOBAL DEFAULT   15 _fini
-    56: 0000000000000000     0 FUNC    GLOBAL DEFAULT  UND printf@@GLIBC_2.2.5
-    57: 0000000000000000     0 FUNC    GLOBAL DEFAULT  UND __libc_start_main@@GLIBC_
-    58: 0000000000601028     0 NOTYPE  GLOBAL DEFAULT   25 __data_start
-    59: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND __gmon_start__
-    60: 00000000004005d8     0 OBJECT  GLOBAL HIDDEN    16 __dso_handle
-    61: 00000000004005d0     4 OBJECT  GLOBAL DEFAULT   16 _IO_stdin_used
-    62: 0000000000400550   101 FUNC    GLOBAL DEFAULT   14 __libc_csu_init
-    63: 0000000000601030     0 NOTYPE  GLOBAL DEFAULT   26 _end
-    64: 0000000000400430     0 FUNC    GLOBAL DEFAULT   14 _start
-    65: 000000000060102c     0 NOTYPE  GLOBAL DEFAULT   26 __bss_start
-    66: 000000000040051d    37 FUNC    GLOBAL DEFAULT   14 main
-    67: 0000000000601030     0 OBJECT  GLOBAL HIDDEN    25 __TMC_END__
-    68: 00000000004003c8     0 FUNC    GLOBAL DEFAULT   11 _init
-```
+&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/c-hello-world/a.out-symbol.png" />
 <br>
 &emsp;&emsp;这符号表是不是复杂多了，但是`_start`入口还是一样会有，当然也少不了`main`啦,让我们调试一下`gdb -tui a.out`<br>
 &emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/c-hello-world/main.png" />
