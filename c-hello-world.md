@@ -79,7 +79,8 @@ Symbol table '.symtab' contains 12 entries:
 &emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/c-hello-world/reverse-test.png" />
 <br>
 &emsp;&emsp;和汇编版本差别不大是不是，但是对于C来说可就大了去了～
-<br>
+<br>  
+
 ### C语言版本Hello World  
 
 ```
