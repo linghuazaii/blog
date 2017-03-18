@@ -45,4 +45,199 @@ _start:
 
 section .bss
 ```
+&emsp;&emsp;出家人不打诳语，你看你看，`.data`段，存了一个`msg`变量，以及`msglen`，就是已经初始化的全局变量，所谓的静态存储区，`.text`段存的是代码，`_start`就是程序的起始地址，你会发现c程序的symbol table里面也有个`_start`符号。<br>
+&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/c-hello-world/instruction.png" />
+<br>
+&emsp;&emsp;这里我就直接上指令了，`mov eax, 1`表示我们要调用`sys_write`，`mov edi,1`表示我们要写描述符1，即`stdout`，`mov edi,msg`表示传入要写内容的地址，`mov edx,msglen`表示传入消息长度，然后`syscall`中断，让操作系统干事去。你仔细看，其实这段汇编完全遵循着intel x86的指令集表，是不是？你现在在把前面指令集啊，寄存器啊啥的联系起来想一想，程序其实就是这么回事儿。然后后端就是调用退出指令：<br>
+&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/c-hello-world/exit-instruction.png" />
+<br>
+&emsp;&emsp;我没骗你吧，遵循着那张指令集表呢。如果你翻过Linux内核源码你就会发现很多`_sys`打头的函数，看看那堆乱七八糟的宏定义～
+<br>
+&emsp;&emsp;`nasm -f elf64 -g -F stabs test.asm -o test.o`，然后`ld test.o -o test`。让我们调试一下：`gdb -tui test`
+<br>
+&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/c-hello-world/test.asm.png" />
+<br>
+&emsp;&emsp;操作细节我就不写了，你自己慢慢玩嘛，看看寄存器的变化啥的。然后我们看看symbol table，`readelf -s test`<br>
+```
+Symbol table '.symtab' contains 12 entries:
+   Num:    Value          Size Type    Bind   Vis      Ndx Name
+     0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND
+     1: 00000000004000b0     0 SECTION LOCAL  DEFAULT    1
+     2: 00000000006000d4     0 SECTION LOCAL  DEFAULT    2
+     3: 0000000000000000     0 SECTION LOCAL  DEFAULT    3
+     4: 0000000000000000     0 SECTION LOCAL  DEFAULT    4
+     5: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS 002.asm
+     6: 00000000006000d4     1 OBJECT  LOCAL  DEFAULT    2 msg
+     7: 000000000000000d     0 NOTYPE  LOCAL  DEFAULT  ABS msglen
+     8: 00000000004000b0     0 NOTYPE  GLOBAL DEFAULT    1 _start
+     9: 00000000006000e1     0 NOTYPE  GLOBAL DEFAULT    2 __bss_start
+    10: 00000000006000e1     0 NOTYPE  GLOBAL DEFAULT    2 _edata
+    11: 00000000006000e8     0 NOTYPE  GLOBAL DEFAULT    2 _end
+```
+<br>
+&emsp;&emsp;然后我们再反编译一下对比一下，`objdump -S --disassemble test`<br>
+```
+test:     file format elf64-x86-64
 
+
+Disassembly of section .text:
+
+00000000004000b0 <_start>:
+
+section .text
+
+global _start
+_start:
+    nop ; make gdb happy
+  4000b0:    90                       nop
+    ; put your experiments between these nop
+    mov eax,1
+  4000b1:    b8 01 00 00 00           mov    $0x1,%eax
+    mov edi,1
+  4000b6:    bf 01 00 00 00           mov    $0x1,%edi
+    mov esi,msg
+  4000bb:    be d4 00 60 00           mov    $0x6000d4,%esi
+    mov edx,msglen
+  4000c0:    ba 0d 00 00 00           mov    $0xd,%edx
+    syscall
+  4000c5:    0f 05                    syscall
+    ; put your expeirments between these nop
+    nop ; make gdb happy
+  4000c7:    90                       nop
+
+    ; exit
+    mov eax,60 ; system call 60: exit
+  4000c8:    b8 3c 00 00 00           mov    $0x3c,%eax
+    xor edi, edi ; set exit status to zero
+  4000cd:    31 ff                    xor    %edi,%edi
+    syscall ; call the operating system
+  4000cf:    0f 05                    syscall
+```
+<br>
+&emsp;&emsp;和汇编版本差别不大是不是，但是对于C来说可就大了去了～
+<br>
+### C语言版本Hello World
+```
+#include <stdio.h>
+int main(int argc, char **argv) {
+    printf("Hello World!");
+
+    return 0;
+}
+```
+<br>
+&emsp;&emsp;C语言版本够简单把，才这几行～ 我们看看符号表，`readelf -s a.out`<br>
+```
+Symbol table '.symtab' contains 69 entries:
+   Num:    Value          Size Type    Bind   Vis      Ndx Name
+     0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND
+    32: 0000000000000000     0 SECTION LOCAL  DEFAULT   32
+    33: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS crtstuff.c
+    34: 0000000000600e20     0 OBJECT  LOCAL  DEFAULT   21 __JCR_LIST__
+    35: 0000000000400460     0 FUNC    LOCAL  DEFAULT   14 deregister_tm_clones
+    36: 0000000000400490     0 FUNC    LOCAL  DEFAULT   14 register_tm_clones
+    37: 00000000004004d0     0 FUNC    LOCAL  DEFAULT   14 __do_global_dtors_aux
+    38: 000000000060102c     1 OBJECT  LOCAL  DEFAULT   26 completed.6337
+    39: 0000000000600e18     0 OBJECT  LOCAL  DEFAULT   20 __do_global_dtors_aux_fin
+    40: 00000000004004f0     0 FUNC    LOCAL  DEFAULT   14 frame_dummy
+    41: 0000000000600e10     0 OBJECT  LOCAL  DEFAULT   19 __frame_dummy_init_array_
+    42: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS h.c
+    43: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS crtstuff.c
+    44: 0000000000400718     0 OBJECT  LOCAL  DEFAULT   18 __FRAME_END__
+    45: 0000000000600e20     0 OBJECT  LOCAL  DEFAULT   21 __JCR_END__
+    46: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS
+    47: 0000000000600e18     0 NOTYPE  LOCAL  DEFAULT   19 __init_array_end
+    48: 0000000000600e28     0 OBJECT  LOCAL  DEFAULT   22 _DYNAMIC
+    49: 0000000000600e10     0 NOTYPE  LOCAL  DEFAULT   19 __init_array_start
+    50: 00000000004005f0     0 NOTYPE  LOCAL  DEFAULT   17 __GNU_EH_FRAME_HDR
+    51: 0000000000601000     0 OBJECT  LOCAL  DEFAULT   24 _GLOBAL_OFFSET_TABLE_
+    52: 00000000004005c0     2 FUNC    GLOBAL DEFAULT   14 __libc_csu_fini
+    53: 0000000000601028     0 NOTYPE  WEAK   DEFAULT   25 data_start
+    54: 000000000060102c     0 NOTYPE  GLOBAL DEFAULT   25 _edata
+    55: 00000000004005c4     0 FUNC    GLOBAL DEFAULT   15 _fini
+    56: 0000000000000000     0 FUNC    GLOBAL DEFAULT  UND printf@@GLIBC_2.2.5
+    57: 0000000000000000     0 FUNC    GLOBAL DEFAULT  UND __libc_start_main@@GLIBC_
+    58: 0000000000601028     0 NOTYPE  GLOBAL DEFAULT   25 __data_start
+    59: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND __gmon_start__
+    60: 00000000004005d8     0 OBJECT  GLOBAL HIDDEN    16 __dso_handle
+    61: 00000000004005d0     4 OBJECT  GLOBAL DEFAULT   16 _IO_stdin_used
+    62: 0000000000400550   101 FUNC    GLOBAL DEFAULT   14 __libc_csu_init
+    63: 0000000000601030     0 NOTYPE  GLOBAL DEFAULT   26 _end
+    64: 0000000000400430     0 FUNC    GLOBAL DEFAULT   14 _start
+    65: 000000000060102c     0 NOTYPE  GLOBAL DEFAULT   26 __bss_start
+    66: 000000000040051d    37 FUNC    GLOBAL DEFAULT   14 main
+    67: 0000000000601030     0 OBJECT  GLOBAL HIDDEN    25 __TMC_END__
+    68: 00000000004003c8     0 FUNC    GLOBAL DEFAULT   11 _init
+```
+<br>
+&emsp;&emsp;这符号表是不是复杂多了，但是`_start`入口还是一样会有，当然也少不了`main`啦,让我们调试一下`gdb -tui a.out`<br>
+&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/c-hello-world/main.png" />
+<br>
+&emsp;&emsp;从`_start`开始会调到`__libc_start_main@plt`,关于plt我这里要唠叨两句，如果你写过插件化的架构或者其他的东西肯定会用到`dlopen`，这又要扯到什么链接装载与库，什么乱七八糟的东西，我不想扯。连接器将一堆.o链接成一个可执行文件的时候就是找符号，没有的就向后找，凡是使用到的都去找，第一个找到的扔进plt表，如果一个都找不到那么就出现`Undefined Reference`错误。看上边的符号表里也有`__libc_start_main`，对吧，联系起来了吧。然后我们继续调试会发现函数调用次序是这样的`printf@plt` => `vfprintf` => `strchrnul`，反正具体什么玩意我也不是很懂，毕竟我也是个Newbie。到这里呢，如果你也是跟着我一起gdb了，你会发现，一些都是地址，地址指向代码段，数据段，然后整到寄存器里，然后送到CPU，CPU把一切都搞定了，程序就跑起来啦。
+<br>
+&emsp;&emsp;让我们反编译一下a.out看看是些什么鬼东西把～ `objdump -S --disassemble a.out`,汇编指令我就省略掉大部分
+<br>
+```
+a.out:     file format elf64-x86-64
+
+Disassembly of section .init:
+
+00000000004003c8 <_init>:
+  4003c8:    48 83 ec 08              sub    $0x8,%rsp
+
+Disassembly of section .plt:
+
+00000000004003f0 <printf@plt-0x10>:
+  4003f0:    ff 35 12 0c 20 00        pushq  0x200c12(%rip)        # 601008 <_GLOBAL_OFFSET_TABLE_+0x8>
+0000000000400400 <printf@plt>:
+  400400:    ff 25 12 0c 20 00        jmpq   *0x200c12(%rip)        # 601018 <_GLOBAL_OFFSET_TABLE_+0x18>
+0000000000400410 <__libc_start_main@plt>:
+  400410:    ff 25 0a 0c 20 00        jmpq   *0x200c0a(%rip)        # 601020 <_GLOBAL_OFFSET_TABLE_+0x20>
+
+Disassembly of section .plt.got:
+
+0000000000400420 <.plt.got>:
+  400420:    ff 25 d2 0b 20 00        jmpq   *0x200bd2(%rip)        # 600ff8 <_DYNAMIC+0x1d0>
+
+Disassembly of section .text:
+
+0000000000400430 <_start>:
+  400430:    31 ed                    xor    %ebp,%ebp
+
+0000000000400460 <deregister_tm_clones>:
+  400460:    b8 37 10 60 00           mov    $0x601037,%eax
+
+0000000000400490 <register_tm_clones>:
+  400490:    b8 30 10 60 00           mov    $0x601030,%eax
+
+00000000004004d0 <__do_global_dtors_aux>:
+  4004d0:    80 3d 55 0b 20 00 00     cmpb   $0x0,0x200b55(%rip)        # 60102c <_edata>
+
+00000000004004f0 <frame_dummy>:
+  4004f0:    48 83 3d 28 09 20 00     cmpq   $0x0,0x200928(%rip)        # 600e20 <__JCR_END__>
+
+000000000040051d <main>:
+#include <stdio.h>
+int main(int argc, char **argv) {
+  40051d:    55                       push   %rbp
+}
+0000000000400550 <__libc_csu_init>:
+  400568:    55                       push   %rbp
+
+00000000004005c0 <__libc_csu_fini>:
+  4005c0:    f3 c3                    repz retq
+
+Disassembly of section .fini:
+
+00000000004005c4 <_fini>:
+  4005c4:    48 83 ec 08              sub    $0x8,%rsp
+```
+&emsp;&emsp;你发现了吗，符号表里的symbol对应着段，段对应着一个起始地址，起始地址之后是一段汇编代码，一切的一切在这里都联系起来了吧，一切的一切都是地址，给我地址我就能拿到所有能拿到的东西。
+
+### 小结
+&emsp;&emsp;小结个屁，这都晚上12:30了，看了这么久，给你们出个简单的小题目，看你们看懂了没：<br>
+&emsp;&emsp;我现在有两个库a.so和b.so，两个库里面都有一个print 函数，a.so里输出A，b.so里输出B，然后我有一个主程序文件main.c，<br>
+&emsp;&emsp;如果我`gcc -L. main.c -o test -la -lb`，运行程序输出啥？<br>
+&emsp;&emsp;如果我`gcc -L. main.c -o test -lb -la`，运行程序输出啥？<br>
+&emsp;&emsp;欢迎评论，就算你评论了，我也不会理你的～
+&emsp;&emsp;**GLHF~**
