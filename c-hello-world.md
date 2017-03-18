@@ -9,4 +9,40 @@
 
 ### x86的内存模型
 &emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/c-hello-world/memory-model.png" />
+<br>
+&emsp;&emsp;我来一个个解释哈，后面我会直接上一个x86-64汇编版本的Hello World。现在的内存模型，早已不是远古时期DOS时代的真实地址模型了，virtual memory，也就是每个程序先给你一个4G的Sandbox玩，寄存器里存的各个段的地址都是偏移地址，真实地址CPU会帮我们算出来。而且呢，程序的起始偏移地址并不是0x00000000,而是0x400000，这段内存里存的是标准库的一些信息，我们不用理她。程序呢，是一段一段组成的，data段啊，text段啊，bss段啊，各种SS，DS，CS，ES，FS，GS寄存器就是存一个段起始值，然后SP，DI，SI啊可以存一个偏移，如图中DS:SI就指向了一个具体的地址。现在我只需要向你强调一件事：地址这个东西非常非常重要，它是程序跑起来的核心！
+
+### 那些逗逼寄存器们
+&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/c-hello-world/Register386.png" />
+<br>
+&emsp;&emsp;eax，ebx，ecx，edx这几个是通用的，32位，去掉e，例如ax就是16位，ah或者al就是高八位和低八位，esi，edi，esp，ebp没八位那一说，用法看CPU喜好。CS即Code Segment，DS即Data Segment，SS即Stack Segment，ES，FS，GS是扩展用的，因为可能不止一个段，而且一条指令可能需要多个数据段的数据，所以这几个是扩展用的。EFLAGS这是是存CPU状态的，像什么溢出啊之类的。最经典的EIP/RIP，这个大妹子可厉害了，存的是下一条指令的地址。先恭喜一下360安全团队夺取本届Pwn2Own世界冠军。如果你能够找到一个程序的漏洞，并且这个漏洞可以用来获得EIP/RIP控制权，那么你就可以执行任意代码，随意更改代码逻辑，如果你发现知名厂商有这种漏洞的话，那么恭喜你，0day漏洞，拿去卖吧，买房不是梦～寄存器就是这样的，我知道你还没听懂，没关系，下面我们来干活，抄起键盘就是干～
+
+### x86-64版本Hello World
+```
+; This file is auto-generated.Edit it at your own peril.
+section .data
+msg: db "Hello World!",10
+msglen: equ $-msg
+
+section .text
+
+global _start
+_start:
+    nop ; make gdb happy
+    ; put your experiments between these nop
+    mov eax,1
+    mov edi,1
+    mov esi,msg
+    mov edx,msglen
+    syscall
+    ; put your expeirments between these nop
+    nop ; make gdb happy
+    
+    ; exit 
+    mov eax,60 ; system call 60: exit
+    xor edi, edi ; set exit status to zero
+    syscall ; call the operating system
+
+section .bss
+```
 
