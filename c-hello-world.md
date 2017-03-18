@@ -91,7 +91,8 @@ int main(int argc, char **argv) {
 }
 ```
 <br>
-&emsp;&emsp;C语言版本够简单把，才这几行～ 我们看看符号表，`readelf -s a.out`<br>
+&emsp;&emsp;C语言版本够简单把，才这几行～ 我们看看符号表，`readelf -s a.out`  
+<br>
 ```
 Symbol table '.symtab' contains 69 entries:
    Num:    Value          Size Type    Bind   Vis      Ndx Name
