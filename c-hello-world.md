@@ -75,43 +75,8 @@ Symbol table '.symtab' contains 12 entries:
     11: 00000000006000e8     0 NOTYPE  GLOBAL DEFAULT    2 _end
 ```
 <br>
-&emsp;&emsp;然后我们再反编译一下对比一下，`objdump -S --disassemble test`<br>
-```
-test:     file format elf64-x86-64
-
-Disassembly of section .text:
-
-00000000004000b0 <_start>:
-
-section .text
-
-global _start
-_start:
-nop ; make gdb happy
-4000b0:    90                       nop
-; put your experiments between these nop
-mov eax,1
-4000b1:    b8 01 00 00 00           mov    $0x1,%eax
-mov edi,1
-4000b6:    bf 01 00 00 00           mov    $0x1,%edi
-mov esi,msg
-4000bb:    be d4 00 60 00           mov    $0x6000d4,%esi
-mov edx,msglen
-4000c0:    ba 0d 00 00 00           mov    $0xd,%edx
-syscall
-4000c5:    0f 05                    syscall
-; put your expeirments between these nop
-nop ; make gdb happy
-4000c7:    90                       nop
-
-; exit
-mov eax,60 ; system call 60: exit
-4000c8:    b8 3c 00 00 00           mov    $0x3c,%eax
-xor edi, edi ; set exit status to zero
-4000cd:    31 ff                    xor    %edi,%edi
-syscall ; call the operating system
-4000cf:    0f 05                    syscall
-```
+&emsp;&emsp;然后我们再反编译一下对比一下，`objdump -S --disassemble test` <br>
+&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/c-hello-world/reverse-test.png" />
 <br>
 &emsp;&emsp;和汇编版本差别不大是不是，但是对于C来说可就大了去了～
 <br>
@@ -176,61 +141,7 @@ Symbol table '.symtab' contains 69 entries:
 <br>
 &emsp;&emsp;让我们反编译一下a.out看看是些什么鬼东西把～ `objdump -S --disassemble a.out`,汇编指令我就省略掉大部分
 <br>
-```
-a.out:     file format elf64-x86-64
-
-Disassembly of section .init:
-
-00000000004003c8 <_init>:
-  4003c8:    48 83 ec 08              sub    $0x8,%rsp
-
-Disassembly of section .plt:
-
-00000000004003f0 <printf@plt-0x10>:
-  4003f0:    ff 35 12 0c 20 00        pushq  0x200c12(%rip)        # 601008 <_GLOBAL_OFFSET_TABLE_+0x8>
-0000000000400400 <printf@plt>:
-  400400:    ff 25 12 0c 20 00        jmpq   *0x200c12(%rip)        # 601018 <_GLOBAL_OFFSET_TABLE_+0x18>
-0000000000400410 <__libc_start_main@plt>:
-  400410:    ff 25 0a 0c 20 00        jmpq   *0x200c0a(%rip)        # 601020 <_GLOBAL_OFFSET_TABLE_+0x20>
-
-Disassembly of section .plt.got:
-
-0000000000400420 <.plt.got>:
-  400420:    ff 25 d2 0b 20 00        jmpq   *0x200bd2(%rip)        # 600ff8 <_DYNAMIC+0x1d0>
-
-Disassembly of section .text:
-
-0000000000400430 <_start>:
-  400430:    31 ed                    xor    %ebp,%ebp
-
-0000000000400460 <deregister_tm_clones>:
-  400460:    b8 37 10 60 00           mov    $0x601037,%eax
-
-0000000000400490 <register_tm_clones>:
-  400490:    b8 30 10 60 00           mov    $0x601030,%eax
-
-00000000004004d0 <__do_global_dtors_aux>:
-  4004d0:    80 3d 55 0b 20 00 00     cmpb   $0x0,0x200b55(%rip)        # 60102c <_edata>
-
-00000000004004f0 <frame_dummy>:
-  4004f0:    48 83 3d 28 09 20 00     cmpq   $0x0,0x200928(%rip)        # 600e20 <__JCR_END__>
-
-000000000040051d <main>:
-#include <stdio.h>
-int main(int argc, char **argv) {
-  40051d:    55                       push   %rbp
-}
-0000000000400550 <__libc_csu_init>:
-  400568:    55                       push   %rbp
-
-00000000004005c0 <__libc_csu_fini>:
-  4005c0:    f3 c3                    repz retq
-
-Disassembly of section .fini:
-
-00000000004005c4 <_fini>:
-  4005c4:    48 83 ec 08              sub    $0x8,%rsp
-```
+&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/c-hello-world/reverse-a.out.png" />
 &emsp;&emsp;你发现了吗，符号表里的symbol对应着段，段对应着一个起始地址，起始地址之后是一段汇编代码，一切的一切在这里都联系起来了吧，一切的一切都是地址，给我地址我就能拿到所有能拿到的东西。
 
 ### 小结
