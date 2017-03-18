@@ -79,7 +79,6 @@ Symbol table '.symtab' contains 12 entries:
 ```
 test:     file format elf64-x86-64
 
-
 Disassembly of section .text:
 
 00000000004000b0 <_start>:
@@ -88,30 +87,30 @@ section .text
 
 global _start
 _start:
-    nop ; make gdb happy
-  4000b0:    90                       nop
-    ; put your experiments between these nop
-    mov eax,1
-  4000b1:    b8 01 00 00 00           mov    $0x1,%eax
-    mov edi,1
-  4000b6:    bf 01 00 00 00           mov    $0x1,%edi
-    mov esi,msg
-  4000bb:    be d4 00 60 00           mov    $0x6000d4,%esi
-    mov edx,msglen
-  4000c0:    ba 0d 00 00 00           mov    $0xd,%edx
-    syscall
-  4000c5:    0f 05                    syscall
-    ; put your expeirments between these nop
-    nop ; make gdb happy
-  4000c7:    90                       nop
+nop ; make gdb happy
+4000b0:    90                       nop
+; put your experiments between these nop
+mov eax,1
+4000b1:    b8 01 00 00 00           mov    $0x1,%eax
+mov edi,1
+4000b6:    bf 01 00 00 00           mov    $0x1,%edi
+mov esi,msg
+4000bb:    be d4 00 60 00           mov    $0x6000d4,%esi
+mov edx,msglen
+4000c0:    ba 0d 00 00 00           mov    $0xd,%edx
+syscall
+4000c5:    0f 05                    syscall
+; put your expeirments between these nop
+nop ; make gdb happy
+4000c7:    90                       nop
 
-    ; exit
-    mov eax,60 ; system call 60: exit
-  4000c8:    b8 3c 00 00 00           mov    $0x3c,%eax
-    xor edi, edi ; set exit status to zero
-  4000cd:    31 ff                    xor    %edi,%edi
-    syscall ; call the operating system
-  4000cf:    0f 05                    syscall
+; exit
+mov eax,60 ; system call 60: exit
+4000c8:    b8 3c 00 00 00           mov    $0x3c,%eax
+xor edi, edi ; set exit status to zero
+4000cd:    31 ff                    xor    %edi,%edi
+syscall ; call the operating system
+4000cf:    0f 05                    syscall
 ```
 <br>
 &emsp;&emsp;和汇编版本差别不大是不是，但是对于C来说可就大了去了～
