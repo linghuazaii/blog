@@ -7,3 +7,4 @@ Welcome To Charles's Awsome Blog
  - [Server-Benchmarking](https://github.com/linghuazaii/blog/wiki/Server-Benchmarking)
  - [我为server省下了4.5G内存](https://github.com/linghuazaii/blog/wiki/%E6%88%91%E4%B8%BAserver%E7%9C%81%E4%B8%8B%E4%BA%864.5G%E5%86%85%E5%AD%98)
  - [[新手乐园]和我一起学C - Hello World](https://github.com/linghuazaii/blog/wiki/%5B新手乐园%5D和我一起学C---Hello-World)
+ - [Simple C++ Template Singleton Class](https://github.com/linghuazaii/blog/wiki/Simple-C---Template-Singleton-Class)
