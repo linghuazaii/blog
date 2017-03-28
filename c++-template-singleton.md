@@ -9,7 +9,7 @@ Simple C++ Template Singleton Class
 
 ## 源码
 [class_templates.h](https://github.com/linghuazaii/C--Templates/blob/master/classes/class_templates.h)
-```
+```c++
 #ifndef _CLASS_TEMPLATES_H
 #define _CLASS_TEMPLATES_H
 /*
@@ -58,7 +58,7 @@ Singleton<T>::~Singleton() {
 #endif
 ```
 [myclass.h](https://github.com/linghuazaii/C--Templates/blob/master/classes/myclass.h)
-```
+```c++
 #ifndef _MY_CLASS_H
 #define _MY_CLASS_H
 /*
@@ -80,7 +80,7 @@ public:
 #endif
 ```
 [main.cpp](https://github.com/linghuazaii/C--Templates/blob/master/classes/main.cpp)
-```
+```c++
 #include <iostream>
 #include "class_templates.h"
 #include "myclass.h"
