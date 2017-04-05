@@ -50,10 +50,10 @@ int main(int argc, char *argv[]) {
 
 &emsp;&emsp;再看看复写stack情况，`./example $(perl -e "print 'A' x 32")`，结果如下：
 
-> -=-=-=-=-=-=-=-=-=-=-=-=-=-
->      Access Granted.
-> -=-=-=-=-=-=-=-=-=-=-=-=-=-
-> Segmentation fault
+> -=-=-=-=-=-=-=-=-=-=-=-=-=-  
+>      Access Granted.  
+> -=-=-=-=-=-=-=-=-=-=-=-=-=-  
+> Segmentation fault  
 
 &emsp;&emsp;虽然栈被写坏了，但是目的达成。
 
@@ -100,10 +100,11 @@ int main(int argc, char *argv[]) {
 <img src="https://github.com/linghuazaii/blog/blob/master/image/stackoverflow/ret_addr.png" /><br>
 &emsp;&emsp;返回地址是`0x4006eb`，也就是调用call之后的下一条指令，我们直接复写返回地址为`0x4006ef`，由于我用的是x86-64的机器，所以是little endian，所以地址得倒着写，执行`./example2 $(perl -e "print '\ef\06\40\00' x 3)`，结果如下：
 
-> -=-=-=-=-=-=-=-=-=-=-=-=-=-
->       Access Granted.
-> -=-=-=-=-=-=-=-=-=-=-=-=-=-
-> Segmentation fault
+> -=-=-=-=-=-=-=-=-=-=-=-=-=-  
+>       Access Granted.  
+> -=-=-=-=-=-=-=-=-=-=-=-=-=-  
+> Segmentation fault  
+
 
 
 ### 结语
