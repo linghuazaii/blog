@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
 > [AFTER] buffer_one is at 0x7fff9fa850b0 and contains 'one'  
 > [AFTER] value is at 0x7fff9fa850bc and is 5 (0x00000005)  
 > execute as expected!   
+
 &emsp;&emsp;关于为什么`buffer_one`和`buffer_tow`的地址间隔是16，而不是8，我没整明白，如果你知道的话，请不吝赐教。从目前得到的信息来看，`buffer_one`比`buffer_one`高出16个字节，而`value`的地址比`buffer_one`高出12个字节而不是4个，这一点我也没整明白，也请不吝赐教。那么我猜想，如果我输入的参数为16个字节的话，按照`strcpy`的规则来讲，`buffer_one`会被覆盖为0x0，再次运行`./example 1234567890123456`，结果如下：  
 > [BEFORE] buffer_two is at 0x7ffd538796d0 and contains 'two'  
 > [BEFORE] buffer_one is at 0x7ffd538796e0 and contains 'one'  
@@ -64,6 +65,7 @@ int main(int argc, char *argv[]) {
 > [AFTER] buffer_one is at 0x7ffd538796e0 and contains ''  
 > [AFTER] value is at 0x7ffd538796ec and is 5 (0x00000005)  
 > execute as expected!  
+
 &emsp;&emsp;和预想的一样，那么我们就可以控制`buffer_one`的内容了，再次运行`./example 1234567890123456fuckedup`，结果如下：  
 > [BEFORE] buffer_two is at 0x7ffc299904f0 and contains 'two'  
 > [BEFORE] buffer_one is at 0x7ffc29990500 and contains 'one'  
@@ -75,6 +77,7 @@ int main(int argc, char *argv[]) {
 > [AFTER] buffer_one is at 0x7ffc29990500 and contains 'fuckedup'  
 > [AFTER] value is at 0x7ffc2999050c and is 5 (0x00000005)  
 > execute as expected!  
+
 &emsp;&emsp;再次如愿以偿，`buffer_one`的内容变成了`fuckedup`，进而我们可以控制`value`的值，让程序换个分支运行，再次运行`./example '1234567890123456fucked up!!!1'`，结果如下：  
 > [BEFORE] buffer_two is at 0x7fff596de720 and contains 'two'  
 > [BEFORE] buffer_one is at 0x7fff596de730 and contains 'one'  
@@ -86,6 +89,7 @@ int main(int argc, char *argv[]) {
 > [AFTER] buffer_one is at 0x7fff596de730 and contains 'fucked up!!!1'  
 > [AFTER] value is at 0x7fff596de73c and is 49 (0x00000031)  
 > execute unexpected, fucked up!  
+
 &emsp;&emsp;请打开ASCII码表查看1的ASCII码值，十进制和十六进制。是不是一切尽在掌握呢，当然，这个权限还是太小，随着以后的分享，我们一步步深入了解。  
 
 ### 留给读者的问题
