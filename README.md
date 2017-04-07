@@ -10,3 +10,4 @@ Welcome To Charles's Awsome Blog
  - [Simple C++ Template Singleton Class](https://github.com/linghuazaii/blog/wiki/Simple-C---Template-Singleton-Class)
  - [[Bug Hunter]关于stack overflow Lesson I](https://github.com/linghuazaii/blog/wiki/%5BBug-Hunter%5D关于stack-overflow-Lesson-I)
  - [[Bug Hunter]关于stack overflow Lesson II](https://github.com/linghuazaii/blog/wiki/%5BBug-Hunter%5D%E5%85%B3%E4%BA%8Estack-overflow-Lesson-II)
+ - [[Bug Hunter]浅说shellcode](https://github.com/linghuazaii/blog/wiki/%5BBug-Hunter%5D%E6%B5%85%E8%AF%B4shellcode)
