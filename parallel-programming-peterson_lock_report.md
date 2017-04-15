@@ -288,8 +288,10 @@ while (lock.flag[1] && lock.victim == 0);       while (lock.flag[0] && lock.v
 &emsp;&emsp;总结一下，`volatile`修饰的作用就是避免在Hardware层面上，变量的值会被写进寄存器，这样也就不会从寄存器读取了。
 
 ### 本报告的简略PDF
+&emsp;&emsp;[Peterson Locking Algorithm Report](https://github.com/linghuazaii/parallel_programming/blob/master/petersons/peterson_report.pdf)
 
-
+### 小结
+&emsp;&emsp;满满的干货，Good Luck, Have Fun!!!
 
 
 
