@@ -108,7 +108,54 @@ int main(int argc, char **argv) {
  - 一种是编译时期的指令重排，可以通过这个来防止：`asm volatile ("" : : : "memory")`  
  - 一种是运行时期的cpu指令重排，同时也包含了防止编译时期的指令重排：`asm volatile ("mfence" : : : "memory")` or `asm volatile ("lfence" : : : "memory")` or `asm volatile ("sfence" : : : "memory")`  
    
-&emsp;&emsp;yi
+&emsp;&emsp;而Memory Fence分为三种：  
+ - mfence -> Performs a serializing operation on all load-from-memory and store-to-memory instructions that were issued prior the MFENCE instruction. **This serializing operation guarantees that every load and store instruction that precedes in program order the MFENCE instruction is globally visible before any load or store instruction that follows the MFENCE instruction is globally visible.** The MFENCE instruction is ordered with respect to all load and store instructions, other MFENCE instructions, any SFENCE and LFENCE instructions, and any serializing instructions (such as the CPUID instruction).
+Weakly ordered memory types can be used to achieve higher processor performance through such techniques as out-of-order issue, speculative reads, write-combining, and write-collapsing.
+The degree to which a consumer of data recognizes or knows that the data is weakly ordered varies among applications and may be unknown to the producer of this data. The MFENCE instruction provides a performance-efficient way of ensuring load and store ordering between routines that produce weakly-ordered results and routines that consume that data.
+It should be noted that processors are free to speculatively fetch and cache data from system memory regions that are assigned a memory-type that permits speculative reads (that is, the WB, WC, and WT memory types). The PREFETCHh instruction is considered a hint to this speculative behavior. Because this speculative fetching can occur at any time and is not tied to instruction execution, the MFENCE instruction is not ordered with respect to PREFETCHh instructions or any other speculative fetching mechanism (that is, data could be speculatively loaded into the cache just before, during, or after the execution of an MFENCE instruction).
+ - lfence -> Performs a serializing operation on all load-from-memory instructions that were issued prior the LFENCE instruction. This serializing operation guarantees that every load instruction that precedes in program order the LFENCE instruction is globally visible before any load instruction that follows the LFENCE instruction is globally visible. The LFENCE instruction is ordered with respect to load instructions, other LFENCE instructions, any MFENCE instructions, and any serializing instructions (such as the CPUID instruction). It is not ordered with respect to store instructions or the SFENCE instruction.
+Weakly ordered memory types can be used to achieve higher processor performance through such techniques as out-of-order issue and speculative reads. The degree to which a consumer of data recognizes or knows that the data is weakly ordered varies among applications and may be unknown to the producer of this data. The LFENCE instruction provides a performance-efficient way of insuring load ordering between routines that produce weakly-ordered results and routines that consume that data.
+It should be noted that processors are free to speculatively fetch and cache data from system memory regions that are assigned a memory-type that permits speculative reads (that is, the WB, WC, and WT memory types). The PREFETCHh instruction is considered a hint to this speculative behavior. Because this speculative fetching can occur at any time and is not tied to instruction execution, the LFENCE instruction is not ordered with respect to PREFETCHh instructions or any other speculative fetching mechanism (that is, data could be speculative loaded into the cache just before, during, or after the execution of an LFENCE instruction).
+ - sfence -> Performs a serializing operation on all store-to-memory instructions that were issued prior the SFENCE instruction. This serializing operation guarantees that every store instruction that precedes in program order the SFENCE instruction is globally visible before any store instruction that follows the SFENCE instruction is globally visible. The SFENCE instruction is ordered with respect store instructions, other SFENCE instructions, any MFENCE instructions, and any serializing instructions (such as the CPUID instruction). It is not ordered with respect to load instructions or the LFENCE instruction.
+Weakly ordered memory types can be used to achieve higher processor performance through such techniques as out-of-order issue, write-combining, and write-collapsing. The degree to which a consumer of data recognizes or knows that the data is weakly ordered varies among applications and may be unknown to the producer of this data. The SFENCE instruction provides a performance-efficient way of insuring store ordering between routines that produce weakly-ordered results and routines that consume this data.  
+  
+&emsp;&emsp;参考Intel x86-64的Memory Ordering的设计，其实lfence和sfence在保证Memory Ordering这点上是没有意义的，因为Intel x86-64本来就是strict memory order，但是内存可见性这个点上，lfence和sfence任然有其价值，由于Peterson Lock是为了避免store&load的指令重排，所以我们使用mfence，
+即Full Memory Fence。加上MFENCE之后的代码如下：
+```
+#ifndef _PETERSON_LOCK_H
+#define _PETERSON_LOCK_H
+/*
+ * Description: implementing peterson's locking algorithm
+ * File: peterson_lock.h
+ * Author: Charles, Liu.
+ * Mailto: charlesliu.cn.bj@gmail.com
+ */
+#include <pthread.h>
+
+typedef struct {
+    volatile bool flag[2];
+    volatile int victim;
+} peterson_lock_t;
+
+void peterson_lock_init(peterson_lock_t &lock) {
+    lock.flag[0] = lock.flag[1] = false;
+    lock.victim = 0;
+}
+
+void peterson_lock(peterson_lock_t &lock, int id) {
+    lock.flag[id] = true;
+    lock.victim = id;
+    asm volatile ("mfence" : : : "memory");
+    while (lock.flag[1 - id] && lock.victim == id);
+}
+
+void peterson_unlock(peterson_lock_t &lock, int id) {
+    lock.flag[id] = false;
+    lock.victim = id;
+}
+
+#endif
+```
 
 
 
