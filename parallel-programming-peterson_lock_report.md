@@ -143,10 +143,10 @@ void peterson_lock_init(peterson_lock_t &lock) {
 }
 
 void peterson_lock(peterson_lock_t &lock, int id) {
-    lock.flag[id] = true;
-    lock.victim = id;
-    asm volatile ("mfence" : : : "memory");
-    while (lock.flag[1 - id] && lock.victim == id);
+    lock.flag[id] = true; // 子句A
+    lock.victim = id; // 子句B，子句A和B的顺序很重要，如果调换的话会出现问题
+    asm volatile ("mfence" : : : "memory"); // MFENCE加在store和load之间
+    while (lock.flag[1 - id] && lock.victim == id);
 }
 
 void peterson_unlock(peterson_lock_t &lock, int id) {
@@ -155,6 +155,40 @@ void peterson_unlock(peterson_lock_t &lock, int id) {
 }
 
 #endif
+```
+&emsp;&emsp;首先看一下MFENCE添加的位置是在store和load之间，其次思考这么一个问题，如果调换子句A和子句B的位置会出现什么情况呢？
+```
+peterson_lock_0:                       peterson_lock_1:
+-------------------------------------------------------
+lock.victim = 0;
+                                      lock.victim = 1;
+                                      lock.flag[1] = true;
+                                      asm volatile ("mfence" : : : "memory");
+                                      while (lock.flag[0] && lock.victim == 1);
+                                      // lock.flag[0] is false so
+                                      // the process enters critical
+                                      // section
+lock.flag[0] = true;
+asm volatile ("mfence" : : : "memory");
+while (lock.flag[1] && lock.victim == 0);
+// lock.victim is 1 so
+// the process enters critical
+// section
+```
+&emsp;&emsp;Thread0和Thread1会同时进入Critical Section，再思考如下的情况，
+```
+Thread0:                                Thread1:
+-------------------------------------------------------
+lock.flag[0] = true;
+lock.victim = 0;						
+                                        lock.flag[1] = true;
+                                        lock.victim = 1;
+                                        mfence;
+                                        如果这个时候Thread0的lock.victim = 0对于Thread1可见，
+                                        那么会进入Critical Section
+mfence;
+如果这个时候Thread1的lock.victim = 1对于
+Thread0可见，那么会进入Critical Section
 ```
 
 
