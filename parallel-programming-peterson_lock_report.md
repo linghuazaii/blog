@@ -252,7 +252,42 @@ lock.victim = id;
   4007cc:   0f 1f 40 00             nop    DWORD PTR [rax+0x0]
 ```
 &emsp;&emsp;请注意上面的Clause 1-2，发现没，`lock.flag[id]`变为了直接赋值，而`lock.victim`的值变为从`esi`寄存器读，由于现在CPU架构大多都是NUMA架构，我的也是，各个CPU独享自己的寄存器，然后`gdb -tui [our program]`，`break peterson_lock`然后运行发现，直接跳转如下：
+<img src="https://github.com/linghuazaii/blog/blob/master/image/peterson_lock/peterson_gdb.png" />  
+&emsp;&emsp;并没有`peterson_lock`函数，也就是`-O2`直接将它inline掉了。如果运行程序会发现程序直接死锁了，下面我会给出解释的，先让我们看看`-O3`编译出的版本：
+```asm
+00000000004007a0 <_Z13peterson_lockR15peterson_lock_ti>:
+  4007a0:   48 63 c6                movsxd rax,esi
+  4007a3:   c6 04 07 01             mov    BYTE PTR [rdi+rax*1],0x1
+  4007a7:   89 77 04                mov    DWORD PTR [rdi+0x4],esi
+  4007aa:   0f ae f0                mfence
+  4007ad:   b8 01 00 00 00          mov    eax,0x1
+  4007b2:   29 f0                   sub    eax,esi
+  4007b4:   48 98                   cdqe
+  4007b6:   80 3c 07 00             cmp    BYTE PTR [rdi+rax*1],0x0
+  4007ba:   74 05                   je     4007c1 <_Z13peterson_lockR15peterson_lock_ti+0x21>
+  4007bc:   3b 77 04                cmp    esi,DWORD PTR [rdi+0x4]
+  4007bf:   74 07                   je     4007c8 <_Z13peterson_lockR15peterson_lock_ti+0x28>
+  4007c1:   f3 c3                   repz ret
+  4007c3:   0f 1f 44 00 00          nop    DWORD PTR [rax+rax*1+0x0]
+  4007c8:   eb fe                   jmp    4007c8 <_Z13peterson_lockR15peterson_lock_ti+0x28>
+  4007ca:   66 0f 1f 44 00 00       nop    WORD PTR [rax+rax*1+0x0]
+```
+&emsp;&emsp;和`-O2`的版本并没有多大差别，如果运行的话还是会死锁。为什么会死锁呢？解释如下：
+```c
+由于lock.victim的值直接从寄存器读取，那么lock.victim == id 的条件恒成立
 
+Thread0                                         Thread1
+------------------------------------------------------------------
+lock.flag[0] = true;                            lock.flag[1] = true;
+lock.victim = 0;                                lock.victim = 1;
+mfence;                                         mfence;
+while (lock.flag[1] && lock.victim == 0);       while (lock.flag[0] && lock.victim == 1);
+同时进入死锁
+```
+&emsp;&emsp;其实由于Thread0写`lock.flag[0]`，读`lock.flag[1]`；Thread1写`lock.flag[1]`，读`lock.flag[0]`，即各自读写不同的内存，所以`bool lock.flag[2]`之前的`volatile`是可以去掉的，但是`volatile int lock.victim`前面的`volatile`是必须得保留的。  
+&emsp;&emsp;总结一下，`volatile`修饰的作用就是避免在Hardware层面上，变量的值会被写进寄存器，这样也就不会从寄存器读取了。
+
+### 本报告的简略PDF
 
 
 
