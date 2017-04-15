@@ -203,10 +203,10 @@ Thread0可见，那么会进入Critical Section
   400643:   48 8b 55 f8             mov    rdx,QWORD PTR [rbp-0x8]
   400647:   8b 45 f4                mov    eax,DWORD PTR [rbp-0xc]
   40064a:   48 98                   cdqe
-  40064c:   c6 04 02 01             mov    BYTE PTR [rdx+rax*1],0x1
-  400650:   48 8b 45 f8             mov    rax,QWORD PTR [rbp-0x8]
-  400654:   8b 55 f4                mov    edx,DWORD PTR [rbp-0xc]
-  400657:   89 50 04                mov    DWORD PTR [rax+0x4],edx
+  40064c:   c6 04 02 01             mov    BYTE PTR [rdx+rax*1],0x1 ; Clause 1
+  400650:   48 8b 45 f8             mov    rax,QWORD PTR [rbp-0x8]  ; Clause 2
+  400654:   8b 55 f4                mov    edx,DWORD PTR [rbp-0xc]  ; Clause 3
+  400657:   89 50 04                mov    DWORD PTR [rax+0x4],edx  ; Clause 4
   40065a:   0f ae f0                mfence
   40065d:   90                      nop
   40065e:   b8 01 00 00 00          mov    eax,0x1
@@ -223,7 +223,35 @@ Thread0可见，那么会进入Critical Section
   400680:   5d                      pop    rbp
   400681:   c3                      ret
 ```
-
+&emsp;&emsp;请看上述汇编中标注出来的Clause 1-4，正好对应下面的两句话：
+```c
+lock.flag[id] = true;
+lock.victim = id;
+```
+&emsp;&emsp;但是值并没有存在寄存器里面，也并没有直接从寄存器读取，而是直接读取内存。  
+  
+&emsp;&emsp;如果我们加上`-O2`再编译一次，得到的`void peterson_lock(peterson_lock_t &lock, int id)`的汇编结果如下:
+```asm
+00000000004007a0 <_Z13peterson_lockR15peterson_lock_ti>:
+  4007a0:   48 63 c6                movsxd rax,esi
+  4007a3:   c6 04 07 01             mov    BYTE PTR [rdi+rax*1],0x1 ; Clause 1
+  4007a7:   89 77 04                mov    DWORD PTR [rdi+0x4],esi  ; Clause 2
+  4007aa:   0f ae f0                mfence
+  4007ad:   b8 01 00 00 00          mov    eax,0x1
+  4007b2:   29 f0                   sub    eax,esi
+  4007b4:   48 98                   cdqe
+  4007b6:   80 3c 07 00             cmp    BYTE PTR [rdi+rax*1],0x0
+  4007ba:   75 04                   jne    4007c0 <_Z13peterson_lockR15peterson_lock_ti+0x20>
+  4007bc:   f3 c3                   repz ret
+  4007be:   66 90                   xchg   ax,ax
+  4007c0:   39 77 04                cmp    DWORD PTR [rdi+0x4],esi
+  4007c3:   75 f7                   jne    4007bc <_Z13peterson_lockR15peterson_lock_ti+0x1c>
+  4007c5:   39 77 04                cmp    DWORD PTR [rdi+0x4],esi
+  4007c8:   74 f6                   je     4007c0 <_Z13peterson_lockR15peterson_lock_ti+0x20>
+  4007ca:   eb f0                   jmp    4007bc <_Z13peterson_lockR15peterson_lock_ti+0x1c>
+  4007cc:   0f 1f 40 00             nop    DWORD PTR [rax+0x0]
+```
+&emsp;&emsp;请注意上面的Clause 1-2，发现没，`lock.flag[id]`变为了直接赋值，而`lock.victim`的值变为从`esi`寄存器读，由于现在CPU架构大多都是NUMA架构，我的也是，各个CPU独享自己的寄存器，然后`gdb -tui [our program]`，`break peterson_lock`然后运行发现，直接跳转如下：
 
 
 
