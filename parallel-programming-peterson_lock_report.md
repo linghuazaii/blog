@@ -103,8 +103,12 @@ int main(int argc, char **argv) {
 &emsp;&emsp;以上Peterson Lock实现失败的原因就显而易见了，博主的机器是Intel x86-64 smp的机器，拥有strict memory order，也就是只有在store&load的
 情况下才会有指令重拍的问题，而以上Peterson Lock的实现正好就是store&load的情况，为此我们必须避免CPU的指令重排。
 
-### 关于Memory Fence
-
+### 关于Memory Fence  
+&emsp;&emsp;上节提到避免指令重排需要加Memory Fence，指令重排分为两种:  
+ - 一种是编译时期的指令重排，可以通过这个来防止：`asm volatile ("" : : : "memory")`  
+ - 一种是运行时期的cpu指令重排，同时也包含了防止编译时期的指令重排：`asm volatile ("mfence" : : : "memory")` or `asm volatile ("lfence" : : : "memory")` or `asm volatile ("sfence" : : : "memory")`  
+   
+&emsp;&emsp;yi
 
 
 
