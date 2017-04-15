@@ -10,7 +10,7 @@
 
 ### Peterson Locking Algorithm实现
 &emsp;&emsp;关于Peterson Locking Algorithm，请参考Wiki：[Peterson's algorithm](https://en.wikipedia.org/wiki/Peterson's_algorithm)
-```
+```c
 #ifndef _PETERSON_LOCK_H
 #define _PETERSON_LOCK_H
 /*
@@ -45,7 +45,7 @@ void peterson_unlock(peterson_lock_t &lock, int id) {
 #endif
 ```
 &emsp;&emsp;以下是测试程序：
-```
+```c
 #include <stdio.h>
 #include "peterson_lock.h"
 
@@ -121,7 +121,7 @@ Weakly ordered memory types can be used to achieve higher processor performance 
   
 &emsp;&emsp;参考Intel x86-64的Memory Ordering的设计，其实lfence和sfence在保证Memory Ordering这点上是没有意义的，因为Intel x86-64本来就是strict memory order，但是内存可见性这个点上，lfence和sfence任然有其价值，由于Peterson Lock是为了避免store&load的指令重排，所以我们使用mfence，
 即Full Memory Fence。加上MFENCE之后的代码如下：
-```
+```c
 #ifndef _PETERSON_LOCK_H
 #define _PETERSON_LOCK_H
 /*
@@ -157,7 +157,7 @@ void peterson_unlock(peterson_lock_t &lock, int id) {
 #endif
 ```
 &emsp;&emsp;首先看一下MFENCE添加的位置是在store和load之间，其次思考这么一个问题，如果调换子句A和子句B的位置会出现什么情况呢？
-```
+```c
 peterson_lock_0:                       peterson_lock_1:
 -------------------------------------------------------
 lock.victim = 0;
@@ -176,7 +176,7 @@ while (lock.flag[1] && lock.victim == 0);
 // section
 ```
 &emsp;&emsp;Thread0和Thread1会同时进入Critical Section，再思考如下的情况，
-```
+```c
 Thread0:                                Thread1:
 -------------------------------------------------------
 lock.flag[0] = true;
@@ -190,7 +190,39 @@ mfence;
 如果这个时候Thread1的lock.victim = 1对于
 Thread0可见，那么会进入Critical Section
 ```
+&emsp;&emsp;以上情况并没有发生，为什么呢？请看mfence那段加粗的文字，这正是mfence的另一个作用，内存可见性。
 
+### 关于volatile和GCC优化
+&emsp;&emsp;如果去掉上面的两个volatile，不加优化，运行正常，`void peterson_lock(peterson_lock_t &lock, int id)`的汇编结果如下:
+```asm
+0000000000400638 <_Z13peterson_lockR15peterson_lock_ti>:
+  400638:   55                      push   rbp
+  400639:   48 89 e5                mov    rbp,rsp
+  40063c:   48 89 7d f8             mov    QWORD PTR [rbp-0x8],rdi
+  400640:   89 75 f4                mov    DWORD PTR [rbp-0xc],esi
+  400643:   48 8b 55 f8             mov    rdx,QWORD PTR [rbp-0x8]
+  400647:   8b 45 f4                mov    eax,DWORD PTR [rbp-0xc]
+  40064a:   48 98                   cdqe
+  40064c:   c6 04 02 01             mov    BYTE PTR [rdx+rax*1],0x1
+  400650:   48 8b 45 f8             mov    rax,QWORD PTR [rbp-0x8]
+  400654:   8b 55 f4                mov    edx,DWORD PTR [rbp-0xc]
+  400657:   89 50 04                mov    DWORD PTR [rax+0x4],edx
+  40065a:   0f ae f0                mfence
+  40065d:   90                      nop
+  40065e:   b8 01 00 00 00          mov    eax,0x1
+  400663:   2b 45 f4                sub    eax,DWORD PTR [rbp-0xc]
+  400666:   48 8b 55 f8             mov    rdx,QWORD PTR [rbp-0x8]
+  40066a:   48 98                   cdqe
+  40066c:   0f b6 04 02             movzx  eax,BYTE PTR [rdx+rax*1]
+  400670:   84 c0                   test   al,al
+  400672:   74 0c                   je     400680 <_Z13peterson_lockR15peterson_lock_ti+0x48>
+  400674:   48 8b 45 f8             mov    rax,QWORD PTR [rbp-0x8]
+  400678:   8b 40 04                mov    eax,DWORD PTR [rax+0x4]
+  40067b:   3b 45 f4                cmp    eax,DWORD PTR [rbp-0xc]
+  40067e:   74 de                   je     40065e <_Z13peterson_lockR15peterson_lock_ti+0x26>
+  400680:   5d                      pop    rbp
+  400681:   c3                      ret
+```
 
 
 
