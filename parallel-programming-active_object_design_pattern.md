@@ -154,3 +154,97 @@ private:
 #endif
 ```
 &emsp;&emsp;同时`Servant`还有一个`empty()`方法和一个`full()`方法用来检测消息队列的状态。
+
+### MethodRequest
+&emsp;&emsp;`MethodRequest`是所有Active Object的抽象父类，所有Active Object派生于此。
+```cpp
+#ifndef _METHOD_REQUEST_H
+#define _METHOD_REQUEST_H
+/*
+ * File: method_request.h
+ * Author: Charles, Liu.
+ * Mailto: charlesliu.cn.bj@gmail.com
+ */
+
+class MethodRequest {
+public:
+    virtual bool guard() = 0;
+    virtual void call() = 0;
+};
+
+#endif
+```
+
+### Producer
+&emsp;&emsp;`Producer`派生自`MethodRequest`，是具体的Active Object。
+```cpp
+#ifndef _PRODUCER_H
+#define _PRODUCER_H
+/*
+ * File: producer.h
+ * Author: Charles, Liu.
+ * Mailto: charlesliu.cn.bj@gmail.com
+ */
+#include "servant.h"
+#include "method_request.h"
+#include "message.h"
+
+class Producer : public MethodRequest {
+public:
+    Producer(Servant *servant, Message &msg) {
+        servant_ = servant;
+        msg_ = msg;
+    }
+    virtual bool guard() {
+        return !servant_->full();
+    }
+    virtual void call() {
+        servant_->produce(msg_);
+    }
+private:
+    Servant *servant_;
+    Message msg_;
+};
+
+#endif
+```
+
+### Consumer
+&emsp;&emsp;`Consumer`派生自`MethodReqeust`，是具体的Active Object。
+```cpp
+#ifndef _CONSUMER_H
+#define _CONSUMER_H
+/*
+ * File: consumer.h
+ * Author: Charles, Liu.
+ * Mailto: charlesli.cn.bj@gmail.com
+ */
+#include "servant.h"
+#include "method_request.h"
+#include "message.h"
+#include "message_future.h"
+
+class Consumer : public MethodRequest {
+public:
+    Consumer(Servant *servant, MessageFuture *future) {
+        servant_ = servant;
+        future_ = future;
+    }
+    virtual bool guard() {
+        return !servant_->empty();
+    }
+    virtual void call() {
+        servant_->consume(future_);
+    }
+private:
+    Servant *servant_;
+    MessageFuture *future_;
+};
+
+#endif
+```
+
+
+
+
+
