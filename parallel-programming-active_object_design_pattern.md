@@ -114,6 +114,43 @@ private:
 #endif
 ```
 
+### Servant
+&emsp;&emsp;`Servant`含有`Proxy`函数调用的具体实现，并且维护自己的消息FIFO队列，留给你一个问题思考：为什么`Servant`的`Message`队列不需要加锁？以此进一步思考Active Object Design Pattern做线程同步的本质。
+```cpp
+#ifndef _SERVANT_H
+#define _SERVANT_H
+/*
+ * File: servant.h
+ * Author: Charles, Liu.
+ * Mailto: charlesliu.cn.bj@gmain.com
+ */
+#include <queue>
+#include "message.h"
+#include "message_future.h"
+using std::queue;
 
+class Servant {
+public:
+    Servant(size_t mq_size) : size(mq_size) {}
+    void produce(const Message &msg) {
+        mq.push(msg);
+    }
+    void consume(MessageFuture *future) {
+        Message msg = mq.front();
+        mq.pop();
+        future->setMessage(msg);
+    }
+    bool empty() {
+        return (mq.size() == 0);
+    }
+    bool full() {
+        return (mq.size() == size);
+    }
+private:
+    queue<Message> mq;
+    size_t size;
+};
 
-
+#endif
+```
+&emsp;&emsp;同时`Servant`还有一个`empty()`方法和一个`full()`方法用来检测消息队列的状态。
