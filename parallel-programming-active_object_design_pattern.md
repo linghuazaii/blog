@@ -244,7 +244,155 @@ private:
 #endif
 ```
 
+### ActivationQueue
+&emsp;&emsp;`ActivationQueue`是具体的Active Object队列，因为`Proxy`和`Scheduler`是在不同的线程独立运行，所以得加一把锁。
+```cpp
+#ifndef _ACTIVATION_QUEUE_H
+#define _ACTIVATION_QUEUE_H
+/*
+ * File: activation_queue.h
+ * Author: Charles, Liu.
+ * Mailto: charlesliu.cn.bj@gmai.com
+ */
+#include <vector>
+#include <algorithm>
+#include "method_request.h"
+#include "lock.h"
+using std::vector;
 
+typedef vector<MethodRequest *> ACTIVATION_QUEUE;
+typedef vector<MethodRequest *>::iterator ACTIVATION_QUEUE_ITERATOR;
 
+class ActivationQueue {
+public:
+    enum {INFINITE = -1};
+    ActivationQueue(size_t high_water_mark) {
+        high_water_mark_ = high_water_mark;
+    }
+    ~ActivationQueue() {
+    }
+    void enqueue(MethodRequest *method_request, long msec_timeout = INFINITE) {
+        int ret = 0;
+        if (msec_timeout == INFINITE)
+            lock.lock();
+        else
+            ret = lock.timedlock(msec_timeout);
 
+        if (ret == 0) {
+            if (act_queue_.size() < high_water_mark_)
+                act_queue_.push_back(method_request);
+        }
 
+        lock.unlock();
+    }
+    void dequeue(MethodRequest *method_request, long msec_timeout = INFINITE) {
+        int ret = 0;
+        if (msec_timeout = INFINITE)
+            lock.lock();
+        else
+            ret = lock.timedlock(msec_timeout);
+
+        if (ret == 0) {
+            ACTIVATION_QUEUE_ITERATOR iter = find(act_queue_.begin(), act_queue_.end(), method_request);
+            if (iter != act_queue_.end())
+                act_queue_.erase(iter);
+        }
+
+        lock.unlock();
+    }
+    int size() {
+        int count = 0;
+        lock.lock();
+        count = act_queue_.size();
+        lock.unlock();
+        return count;
+    }
+    MethodRequest *at(size_t i) {
+        MethodRequest *method_request;
+        lock.lock();
+        method_request = act_queue_.at(i);
+        lock.unlock();
+        return method_request;
+    }
+private:
+    vector<MethodRequest *> act_queue_;
+    size_t high_water_mark_;
+    Lock lock;
+};
+
+#endif
+```
+
+### Scheduler
+&emsp;&emsp;`Scheduler`含有一个`ActivationQueue`实例，`Proxy`通过`Scheduler`将具体的Active Object加到`ActivationQueue`队列。`Scheduler`运行的时候，启动一个线程一直观察`ActivationQueue`的Active Object的状态，如果`guard()`成功，则调用`call()`执行`Servant`里的具体方法。
+```cpp
+#ifndef _SCHEDULER_H
+#define _SCHEDULER_H
+/*
+ * File: scheduler.h
+ * Description: type definition for class Scheduler
+ * Author: Charles, Liu.
+ * Mailto: charlesliu.cn.bj@gmail.com
+ */
+#include "activation_queue.h"
+#include "method_request.h"
+#include <pthread.h>
+
+void* dispatch(void *arg);
+
+class Scheduler {
+public:
+    Scheduler(size_t high_water_mark) {
+        act_queue_ = new ActivationQueue(high_water_mark);
+        svr_run = ::dispatch;
+    }
+    ~Scheduler() {
+        delete act_queue_;
+    }
+    void enqueue(MethodRequest *method_request) {
+        act_queue_->enqueue(method_request);
+    }
+    void run() {
+        pthread_t thread_id;
+        pthread_attr_t thread_attr;
+        pthread_attr_init(&thread_attr);
+        pthread_attr_setdetachstate(&thread_attr, PTHREAD_CREATE_DETACHED);
+        pthread_create(&thread_id, &thread_attr, svr_run, this);
+        pthread_attr_destroy(&thread_attr);
+    }
+    void dispatch() {
+        ACTIVATION_QUEUE mark_delete;
+        for (;;) {
+            int count = act_queue_->size();
+            for (int i = 0; i < count; ++i) {
+                MethodRequest *method_request = act_queue_->at(i);
+                if (method_request == NULL)
+                    printf("method request is NULL\n");
+                if (method_request->guard()) {
+                    mark_delete.push_back(method_request);
+                    method_request->call();
+                }
+            }
+            for (ACTIVATION_QUEUE_ITERATOR iter = mark_delete.begin(); iter != mark_delete.end(); ++iter) {
+                act_queue_->dequeue(*iter);
+            }
+        }
+    }
+private:
+    ActivationQueue *act_queue_;
+    void *(*svr_run)(void *);
+};
+
+void* dispatch(void *arg) {
+    Scheduler *this_obj = (Scheduler *)arg;
+    this_obj->dispatch();
+}
+
+#endif
+```
+
+### 项目源码
+&emsp;&emsp;[Active Object项目源码](https://github.com/linghuazaii/parallel_programming/tree/master/active_object)  
+&emsp;&emsp;编译请用`g++ main.cpp -o active_object -lpthread`  
+&emsp;&emsp;本例运行结果如下：  
+&emsp;&emsp;
