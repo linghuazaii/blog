@@ -79,7 +79,40 @@ typedef std::string Message;
 #endif
 ```
 
+### MessageFuture
+&emsp;&emsp;`MessageFuture`包含`consume()`填充的`Message`，并且包含一个`hasMessage()`方法用来判断`Message`是否填充，这样Consumer可以通过这个标志来轮询所有的`MessageFuture`，这样可以避免消息的丢失。
+```cpp
+#ifndef _MESSAGE_FUTURE_H
+#define _MESSAGE_FUTURE_H
+/*
+ * File: message_future.h
+ * Description: type definition for class MessageFuture
+ * Autor: Charles, Liu.
+ * Mailto: charlesliu.cn.bj@gmail.com
+ */
+#include "message.h"
 
+class MessageFuture {
+public:
+    MessageFuture() : has_message(false) {}
+    ~MessageFuture() {}
+    bool hasMessage() {
+        return has_message;
+    }
+    Message getMessage() {
+        return msg_;
+    }
+    void setMessage(Message &msg) {
+        msg_ = msg;
+        has_message = true;
+    }
+private:
+    Message msg_;
+    bool has_message;
+};
+
+#endif
+```
 
 
 
