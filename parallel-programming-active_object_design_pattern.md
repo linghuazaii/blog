@@ -395,4 +395,12 @@ void* dispatch(void *arg) {
 &emsp;&emsp;[Active Object项目源码](https://github.com/linghuazaii/parallel_programming/tree/master/active_object)  
 &emsp;&emsp;编译请用`g++ main.cpp -o active_object -lpthread`  
 &emsp;&emsp;本例运行结果如下：  
-&emsp;&emsp;
+&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/active_object/result.png" />  
+&emsp;&emsp;时间续consume所有的Message。
+
+### Reference
+ - [Active Object Design Pattern Wiki](https://en.wikipedia.org/wiki/Active_object)  
+ - [Active Object](http://www.cs.wustl.edu/~schmidt/PDF/Act-Obj.pdf)
+ 
+### 结语
+&emsp;&emsp;**Good Luck! Have Fun!!!!!!**
