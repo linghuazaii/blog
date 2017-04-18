@@ -2,7 +2,8 @@
 ==========================================
 
 ### 本篇意在澄清利用stackoverflow的bug来执行shellcode的可行性
-&emsp;&emsp;在前面的博客里我提到过“会给出将stackoverflow的bug和shellcode结合起来的博文”，就我目前的知识水平来说，暂时我还做不到这一点。下面澄清一下做不到的原因：  
+&emsp;&emsp;在前面的博客里我提到过“会给出将stackoverflow的bug和shellcode结合起来的博文”，就我目前的知识水平来说，暂时我还做不到这一点。下面澄清一下做不到的原因：    
+
 &emsp;&emsp;请参考[Address space layout randomization (ASLR)](https://en.wikipedia.org/wiki/Address_space_layout_randomization)，也就是程序运行时，Stack的起始地址对于最高分配给进程的Virtual Memory的值来说，有一个随机的offset，而且每次不同，也很难预测。下面是一个简易的测试程序：
 ```cpp
 #include <stdio.h>
