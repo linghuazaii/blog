@@ -36,4 +36,6 @@ L2 cache:              256K
 L3 cache:              30720K
 NUMA node0 CPU(s):     0-3
 ```
-
+单个CPU有三级缓存，访问的clock cycle递增，L1 Cache最快。x86用的CISC指令集，CISC指令集比RISC复杂，Decode的Cost要更高，所以有两个L1 Cache，即L1i（instruction）Cache，用来缓存Decode的CPU指令；L1d（Data）Cache，用来缓存内存数据。    
+&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/pthreads/multi_processor.png" />    
+&emsp;&emsp;多个CPU是这样的，图中给出了两个物理CPU，每个物理CPU有两个Core，每个Core有两个thread，两个thread共享L1i和L1d，Intel的thread实现是这样的，它们有各自独有的寄存器，但是有些寄存器还是共享的，以上就是Intel的Hyper Thread设计。当然，只是一个例子，不同的CPU可能用的不同的架构。
