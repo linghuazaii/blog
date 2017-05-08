@@ -37,8 +37,12 @@ do things;                                    //pthread_mutex_unlock(&mutex);
 ```
 &emsp;&emsp;我们把锁注掉看会发生什么，假设`Thread1`运行在`CPU0`，`Thread2`运行在`CPU1`，首先考虑一下指令重排的情况：如果`condition = true`和`pthread_cond_signal`重排了，信号发了，在`pthread_cond_wait`之前，那么这个信号丢失了，`Thread1`永远Block在`pthread_cond_wait`。再考虑指令不重排的情况：由于是不同的CPU，所以彼此的cacheline并不一定可见，所以`thread2`运行`condition = true`然后发送`pthread_cond_signal`，对于`thread1`，`condition = true`暂时不可见，就会进入`while`，信号丢失，`pthread_cond_wait`永远Block。所以呢，加这把锁就很好的防止了信号丢失的问题。聪明的你可能会继续问：那为什么要`while`循环呢？这是为了保证系统的健壮性，对于内核来说，并不是什么都是确定的，可能由于某种意外情况，就好比意外怀孕一样，这个信号在条件不满足的时候也发出去了呢？这种Wakeup并不违反标准，所以Pthreads这么设计也是为了迎合标准，感兴趣可以Google下**Spurious Wake Up**。
 
+### pthread_cond_signal & pthread_cond_broadcast
+&emsp;&emsp;线程唤醒的原则遵循scheduler的标准，即wakeup的时候，谁的priority大，就唤醒谁，像`SCHED_OTHER`这种默认的`min/max priority`都为`0`的时间片抢占的情况来说，first-in-first-out，很公平。如果你要设计`priority`的话，类似于所有的实时程序设计，使用`SCHED_RR`或者`SCHED_FIFO`。  
+&emsp;&emsp;`pthread_cond_signal`简化一下就一行代码`lll_futex_wake (&cond->__data.__futex, 1, pshared)`；`pthread_cond_broadcast`简化一下也是一行代码`lll_futex_wake (&cond->__data.__futex, INT_MAX, pshared)`。简而言之，`pthread_cond_signal`只唤醒一个线程，根据scheduler策略来，`pthread_cond_broadcast`唤醒所有。
 
-
+### 小结
+&emsp;&emsp;本课内容好像并不多也，**Good Luck! Have Fun!**
 
 
 
