@@ -16,3 +16,4 @@ Welcome To Charles's Awsome Blog
  - [[Bug Hunter]关于stack overflow Lesson III](https://github.com/linghuazaii/blog/wiki/%5BBug-Hunter%5D%E5%85%B3%E4%BA%8Estack-overflow-Lesson-III)
  - [[Parallel Programming]深入PThread (Lesson I)](https://github.com/linghuazaii/blog/wiki/%5BParallel-Programming%5D%E6%B7%B1%E5%85%A5PThread-(Lesson-I))
  - [[Parallel Programming]深入PThread (Lesson II)](https://github.com/linghuazaii/blog/wiki/%5BParallel-Programming%5D%E6%B7%B1%E5%85%A5PThread-(Lesson-II))
+ - [[Machine Learning]Euclidean Distance](https://github.com/linghuazaii/blog/wiki/%5BMachine-Learning%5DEuclidean-Distance)
