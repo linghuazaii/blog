@@ -3,7 +3,7 @@
 
 ### Euclidean Distance
 &emsp;&emsp;Euclidean Distance(欧几里得几何学距离)，定义如下：  
-&emsp;&emsp;&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/machine-learning/euclidean_distance.svg" />
+&emsp;&emsp;&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/machine-learning/euclidean_distance.png" />
 
 ### Distance & Similarity
 &emsp;&emsp;Euclidean Distance 可以被用来计算用户之间的相关性，相距越近的用户相关性越高。举个简单的例子：我看过“楚门的世界”，给了9分，也看过“肖生克的救赎”，给了9.8；你也看过这两部电影，并且给“楚门的世界”打了6分，给“肖生克的救赎”打了9分。那么我们之间的距离可以算出来，`distance = sqrt((9 - 6)^2 + (9.8 - 9)^2) = 3.104835`。为了体现距离越近，相似度越高，通过函数`f(x) = 1 / (1 + x)`转化一下：  
