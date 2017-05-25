@@ -2,7 +2,7 @@
 =====================================
 
 ### Covariance
-&emsp;&emsp;Covariance(协方差)在probability and statistics里是为了衡量两个随机变量的联合可变性，公式如下：
+&emsp;&emsp;Covariance(协方差)在probability and statistics里是为了衡量两个随机变量的联合可变性，公式如下：  
 &emsp;&emsp;&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/machine-learning/covariance.png" />  
 &emsp;&emsp;E(Expectation)，`E(X) = Sum(X1 -> Xn) / n`，当两个随机变量X,Y，X较大的时候，Y也较大，那么`cov(X, Y)`是一个正值，表示X和Y表现的行为是相似的；反之，X较大的时候，Y较小，X较小的时候，Y较大，那么他们的行为是相反的；如果X，Y的表现没什么关系，那么`cov(X, Y) ~ 0`。但是，协方差的大小并不能解释出更多的意义。
 
@@ -11,7 +11,7 @@
 &emsp;&emsp;&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/machine-learning/standard_deviation.png" />  
 
 ### Pearson Correlation
-&emsp;&emsp;Pearson Correlation(皮尔森相关)，皮尔森相关从两个离散的随机变量里近似出一条线，这条线让所有的变量值离这条线都比较近，得到的值是从`-1 < score < 1`，`-1`表示我讨厌你，`0`表你在我这没有存在感，`1`表示我对你有兴趣。公式如下：
+&emsp;&emsp;Pearson Correlation(皮尔森相关)，皮尔森相关从两个离散的随机变量里近似出一条线，这条线让所有的变量值离这条线都比较近，得到的值是从`-1 < score < 1`，`-1`表示我讨厌你，`0`表你在我这没有存在感，`1`表示我对你有兴趣。公式如下：  
 &emsp;&emsp;&emsp;&emsp;<img src="https://github.com/linghuazaii/blog/blob/master/image/machine-learning/pearson_correlation.png" />
 
 ### Euclidean Distance的不足之处
