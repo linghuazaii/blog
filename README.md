@@ -18,3 +18,4 @@ Welcome To Charles's Awsome Blog
  - [[Parallel Programming]深入PThread (Lesson II)](https://github.com/linghuazaii/blog/wiki/%5BParallel-Programming%5D%E6%B7%B1%E5%85%A5PThread-(Lesson-II))
  - [[Machine Learning]Euclidean Distance](https://github.com/linghuazaii/blog/wiki/%5BMachine-Learning%5DEuclidean-Distance)
  - [[Machine Learning]Pearson Correlation](https://github.com/linghuazaii/blog/wiki/%5BMachine-Learning%5DPearson-Correlation)
+ - [[Algorithm]百度：蓄水池抽样](https://github.com/linghuazaii/blog/wiki/%5BAlgorithm%5D%E7%99%BE%E5%BA%A6%EF%BC%9A%E8%93%84%E6%B0%B4%E6%B1%A0%E6%8A%BD%E6%A0%B7)
