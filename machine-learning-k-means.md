@@ -163,5 +163,8 @@ if __name__ == "__main__":
 ```
 &emsp;&emsp;得出的结果并不太准确~
 
+### Reference
+ - [Programming Collective Intelligence](http://shop.oreilly.com/product/9780596529321.do)
+
 ### 小结
 &emsp;&emsp;**GOOD LUCK，HAVE FUN!**
