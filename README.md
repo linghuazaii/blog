@@ -21,3 +21,4 @@ Welcome To Charles's Awsome Blog
  - [[Algorithm]百度：蓄水池抽样](https://github.com/linghuazaii/blog/wiki/%5BAlgorithm%5D%E7%99%BE%E5%BA%A6%EF%BC%9A%E8%93%84%E6%B0%B4%E6%B1%A0%E6%8A%BD%E6%A0%B7)
  - [[Machine Learning]Word Vector](https://github.com/linghuazaii/blog/wiki/%5BMachine-Learning%5DWord-Vector)
  - [[Machine Learning]K-Means](https://github.com/linghuazaii/blog/wiki/%5BMachine-Learning%5DK-Means)
+ - [[Machine Learning]Search And Rank](https://github.com/linghuazaii/blog/wiki/%5BMachine-Learning%5DSearch-And-Rank)
