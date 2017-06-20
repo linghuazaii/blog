@@ -22,3 +22,4 @@ Welcome To Charles's Awsome Blog
  - [[Machine Learning]Word Vector](https://github.com/linghuazaii/blog/wiki/%5BMachine-Learning%5DWord-Vector)
  - [[Machine Learning]K-Means](https://github.com/linghuazaii/blog/wiki/%5BMachine-Learning%5DK-Means)
  - [[Machine Learning]Search And Rank](https://github.com/linghuazaii/blog/wiki/%5BMachine-Learning%5DSearch-And-Rank)
+ - [[Machine Learning]Decision Trees](https://github.com/linghuazaii/blog/wiki/%5BMachine-Learning%5DDecision-Trees)
