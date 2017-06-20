@@ -269,6 +269,8 @@ void do_close(void *arg) {
     }
 }
 ```
+  
+[所有代码在这个](https://github.com/linghuazaii/Simple-Server)
 
 ### 补充说明
 &emsp;&emsp;我比较懒，没有将文件分开写。设计上请求处理函数和处理完后的通知函数都设计成了callback，所以如果进行一个完整封装的话，只有`handle_request`和`handle_response`函数是对上层可见的。这样基于此又可以设计更多样的上层协议，无论是做RPC也好还是做其他的也好，我也正打算用这个简易的server写一个服务发现的server，然后可以写一个简易的分布式cache，然后可以写一个简易的http server，后端的这一套就算基本齐全了吧。  
