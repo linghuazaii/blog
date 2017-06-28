@@ -24,3 +24,4 @@ Welcome To Charles's Awsome Blog
  - [[Machine Learning]Search And Rank](https://github.com/linghuazaii/blog/wiki/%5BMachine-Learning%5DSearch-And-Rank)
  - [[Machine Learning]Decision Trees](https://github.com/linghuazaii/blog/wiki/%5BMachine-Learning%5DDecision-Trees)
  - [怎么从无到有写一个好的TCP Server](https://github.com/linghuazaii/blog/wiki/%E6%80%8E%E4%B9%88%E4%BB%8E%E6%97%A0%E5%88%B0%E6%9C%89%E5%86%99%E4%B8%80%E4%B8%AA%E5%A5%BD%E7%9A%84TCP-Server)
+ - [怎样写一个自修复的TCP连接池](https://github.com/linghuazaii/blog/wiki/%E6%80%8E%E6%A0%B7%E5%86%99%E4%B8%80%E4%B8%AA%E8%87%AA%E4%BF%AE%E5%A4%8D%E7%9A%84TCP%E8%BF%9E%E6%8E%A5%E6%B1%A0)
