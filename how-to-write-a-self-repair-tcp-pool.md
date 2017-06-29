@@ -44,7 +44,7 @@ private:
     bool running;
 };
 ```
-&emsp;&emsp;然后，连接失效了我们怎么修呢？这里就需要用到`epoll`了，所有新建立的连接需要加到`epoll`里监控，只需要监控`EPOLLIN`，根据socket是否设置`SOCK_NONBLOCK`来选择是否是`EPOLLET`模式。其实这个模式是LT还是ET对于连接池来说不重要，因为我们不需要考虑消息是通知一次还是多次，只要有`EPOLLIN`事件产生，就用`ioctl(fd, FIONREAD, &length)`检查一下socket可读的buffer大小，如果为`0`则表示server关闭了连接，需要我们修复。你可能会问：那buffer里有内容我一直没读怎么办？没关系，没读是你的事，等你读完了，无论是LT还是ET模式，对于该socket会一直有`EPOLLIN`事件产生，这里检查可读buffer大小依旧为`0`，此时连接才被判定为失效。一般server挂掉之后起来得花些时间，所以每一次重建连接失败的话会有一个等待延时，而且有一个重试次数，如果耗尽的话就等待下一次`epoll_wait`返回再试。这里其实可以稍微设计一下算法的，比如说每一次重建连接失败都会略微增加延时。其实也没有太大的必要，因为有延时后就减少了很大一部分CPU消耗了，可以忽略不计。
+&emsp;&emsp;然后，连接失效了我们怎么修呢？这里就需要用到`epoll`了，所有新建立的连接需要加到`epoll`里监控，只需要监控`EPOLLIN`，这里我们只能选择LT模式，因为ET模式只通知一次，为了避免数据丢失，只能选择LT模式。只要有`EPOLLIN`事件产生，就用`ioctl(fd, FIONREAD, &length)`检查一下socket可读的buffer大小，如果为`0`则表示server关闭了连接，需要我们修复。你可能会问：那buffer里有内容我一直没读怎么办？没关系，没读是你的事，等你读完了，对于该socket会一直有`EPOLLIN`事件产生，这里检查可读buffer大小依旧为`0`，此时连接才被判定为失效。一般server挂掉之后起来得花些时间，所以每一次重建连接失败的话会有一个等待延时，而且有一个重试次数，如果耗尽的话就等待下一次`epoll_wait`返回再试。这里其实可以稍微设计一下算法的，比如说每一次重建连接失败都会略微增加延时。其实也没有太大的必要，因为有延时后就减少了很大一部分CPU消耗了，可以忽略不计。
 
 ### 实现
 &emsp;初始化该初始化的东西。
@@ -155,10 +155,7 @@ void CharlesTcpPool::watchPool() {
     pthread_mutex_lock(&mutex);
     for (int i = 0; i < init_pool_size; ++i) {
         struct epoll_event event;
-        if (pool[i]->flags & CHARLES_SOCK_NONBLOCK)
-            event.events = EPOLLIN | EPOLLET;
-        else
-            event.events = EPOLLIN;
+        event.events = EPOLLIN;
         event.data.ptr = (void *)pool[i];
         charles_epoll_ctl(epollfd, EPOLL_CTL_ADD, pool[i]->fd, &event);
     }
@@ -228,10 +225,7 @@ void CharlesTcpPool::repairConnection(tcp_connection_t *connection) {
     }
     /* add to epoll event even if this connection is not repaired, wait for next time repair */
     struct epoll_event event;
-    if (connection->flags & CHARLES_SOCK_NONBLOCK)
-        event.events = EPOLLIN | EPOLLET;
-    else
-        event.events = EPOLLIN;
+    event.events = EPOLLIN;
     if (count == RETRY_COUNT) { /* failed, add original fd to epoll events */
         connection->fd = backup;
     }
