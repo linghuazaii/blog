@@ -110,11 +110,10 @@ private:
 Singleton Singleton::singleton;
 ```
 
-&emsp;&emsp;很优雅的规避了DCLP问题，并且多线程安全，为什么多线程安全呢，以下是cpp-reference上的一段解释。
-```
-Non-local variables
-All non-local variables with static storage duration are initialized as part of program startup, before the execution of the main function begins (unless deferred, see below). All variables with thread-local storage duration are initialized as part of thread launch, sequenced-before the execution of the thread function begins.
-```
+&emsp;&emsp;很优雅的规避了DCLP问题，并且多线程安全，为什么多线程安全呢，以下是cpp-reference上的一段解释:
+> Non-local variables
+> All non-local variables with static storage duration are initialized as part of program startup, before the execution of the main function begins (unless deferred, see below). All variables with thread-local storage duration are initialized as part of thread launch, sequenced-before the execution of the thread function begins.
+
 &emsp;&emsp;类里面的static成员是全局的，会在编译的时候存在.bss段，在程序启动也就是在进入到`_start`后`call main`之前，进行初始化。但是呢，这种写法会存在一些隐患。
 
 ### static initialization order fiasco
