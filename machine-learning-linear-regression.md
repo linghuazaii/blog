@@ -22,9 +22,9 @@ Linear Regression(线性回归)
 
 # 例子
 &emsp;&emsp;如下例子，我们给出`y = x`上的三个点，不同的θ值得到的MSE的值是怎样的呢？
-&emsp;<img src = "https://github.com/linghuazaii/blog/blob/master/image/machine-learning/linear_example.JPG" />  
+&emsp;<img src = "https://github.com/linghuazaii/blog/blob/master/image/machine-learning/linear_example.JPG" height = '320px' width = '480px'/>  
 &emsp;&emsp;MSE值如图，图中的cost即为MSE：  
-&emsp;<img src = "https://github.com/linghuazaii/blog/blob/master/image/machine-learning/cost.JPG" />  
+&emsp;<img src = "https://github.com/linghuazaii/blog/blob/master/image/machine-learning/cost.JPG" height = '320px' width = '480px'/>  
 &emsp;&emsp;这是cost和θ取值的关系图，可知θ取1的时候，MSE最小，即求`d(MSE) / d(θ) = 0`时θ的值，但是电脑只会计算，不会解方程，而且`y = kx + b`会让问题变得更复杂，这样就有了一个方法去计算参数的值: [Gradient Descent](https://en.wikipedia.org/wiki/Gradient_descent).  
 
 # Gradient Descent
