@@ -91,8 +91,13 @@ def calc_line_function(data, learn_rate):
         if math.fabs(new_cost - last_cost) <= 0.0001:
             return k, b
         last_cost = new_cost
-```
-&emsp;&emsp;所有代码见 [linear regression code](https://github.com/linghuazaii/Machine-Learning/tree/master/linear_regression)
+``` 
+&emsp;&emsp;本例所得结果如图：  
+&emsp;<img src = 'https://github.com/linghuazaii/blog/blob/master/image/machine-learning/train.png' />  
+&emsp;&emsp;所有代码见 [linear regression code](https://github.com/linghuazaii/Machine-Learning/tree/master/linear_regression)  
+
+# Reference
+ - [Andrew NG Coursera](https://www.coursera.org/learn/machine-learning/home/welcome)
 
 # More
 &emsp;&emsp;Gradient Descent求得的值是局部最优解，并非全局最优解。  
