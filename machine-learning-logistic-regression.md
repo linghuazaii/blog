@@ -33,7 +33,7 @@ xyplot(grade1 ~ grade2, data, groups = label, pch = 20)
 ```
 &emsp;&emsp;数据分布如下图:  
 &emsp;<img src='https://github.com/linghuazaii/Machine-Learning/blob/master/logistic_regression/data-R.png' />  
-&emsp;&emsp;可以看出可以近似通过一条直线来分割曲线，这样的话训练模型为`f(x) = a + bx1 + cx2)`，其实这条线还是有一个弧度的，所以也可以去训练模型为`f(x) = a + bx1 + cx2 + dx1x2`，这样分类更加准确，但是可能引起overfit的问题，我们通过调整λ值来微调。本例两种模型都实现了。  
+&emsp;&emsp;可以看出可以近似通过一条直线来分割曲线，这样的话训练模型为`f(x) = a + bx1 + cx2`，其实这条线还是有一个弧度的，所以也可以去训练模型为`f(x) = a + bx1 + cx2 + dx1x2`，这样分类更加准确，但是可能引起overfit的问题，我们通过调整λ值来微调。本例两种模型都实现了。  
 
 ### 代码
 load数据
