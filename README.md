@@ -28,3 +28,4 @@ Welcome To Charles's Awsome Blog
  - [你真的知道怎么写Singleton吗？](https://github.com/linghuazaii/blog/wiki/%E4%BD%A0%E7%9C%9F%E7%9A%84%E7%9F%A5%E9%81%93%E6%80%8E%E4%B9%88%E5%86%99Singleton%E5%90%97%EF%BC%9F)
  - [Linear Regression(线性回归)](https://github.com/linghuazaii/blog/wiki/Linear-Regression(%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92))
  - [Linear Regression矩阵计算](https://github.com/linghuazaii/blog/wiki/Linear-Regression%E7%9F%A9%E9%98%B5%E8%AE%A1%E7%AE%97)
+ - [Andrew NG. Logistic Regression小结与示例](https://github.com/linghuazaii/blog/wiki/Andrew-NG.-Logistic-Regression%E5%B0%8F%E7%BB%93%E4%B8%8E%E7%A4%BA%E4%BE%8B)
