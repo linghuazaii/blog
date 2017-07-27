@@ -111,6 +111,8 @@ theta_final = opt.fmin_tnc(cost, theta, fprime = grad, args = (X_new, Y), approx
 &emsp;&emsp;`λ = 16.0`时训练结果如下：  
 &emsp;<img src='https://github.com/linghuazaii/Machine-Learning/blob/master/logistic_regression/boundary16.png' />  
 &emsp;&emsp;你可以将这几张图片下载到电脑上浏览，这样对不同的λ取值导致overfit和underfit会有一个很直观的感受。
+  
+&emsp;&emsp;[所有代码见Source Code](https://github.com/linghuazaii/Machine-Learning/tree/master/logistic_regression)
 
 ### 小结
 **GOOD LUCK, HAVE FUN!**
