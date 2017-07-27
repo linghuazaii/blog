@@ -4,7 +4,7 @@ Andrew NG. Logistic Regression小结与示例
 ### Logistics Regression
 &emsp;&emsp;在统计学上，Logistics Regression的例子有不少，虽然叫Regression，其实是Supervise Classification。举个教科书上经常举的例子，就是给定一堆肿瘤的数据，然后根据这些数据去预测未来的肿瘤是良性还是恶性。再具体一点比如说肿瘤的大小，患者年龄，肿瘤良性/恶性，给定肿瘤大小和患者年龄，如何预测肿瘤是良性还是恶性的问题。这就属于一个classification的问题。看下图：  
 &emsp;<img src='https://github.com/linghuazaii/Machine-Learning/blob/master/logistic_regression/data.png' />  
-&emp;&emsp;数据有三个特征，`grade1`, `grade2`, 以及`positive/negative`，Logistics Regression就是用来将数据进行分类，找boundary。
+&emsp;&emsp;数据有三个特征，`grade1`, `grade2`, 以及`positive/negative`，Logistics Regression就是用来将数据进行分类，找boundary。
 
 ### 理论
 &emsp;&emsp;和Linear Regression不同的是，我们的`h(x)`变了。因为预测结果只有0和1，`h(x)`如下：  
