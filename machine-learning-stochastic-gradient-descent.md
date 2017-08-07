@@ -2,7 +2,7 @@ Stochastic Gradient Descent
 ===========================
 
 ### Neural Networks
-&emps;&emsp;Neural Networks是挺有意思的，如果你先前没有了解过，我给你推荐以下的资源：  
+&emsp;&emsp;Neural Networks是挺有意思的，如果你先前没有了解过，我给你推荐以下的资源：  
  - [Andrew NG. Machine Learning Coursera](https://www.coursera.org/learn/machine-learning/home/welcome)
  - [Ra´ul Rojas Neural Networks](https://page.mi.fu-berlin.de/rojas/neural/neuron.pdf)
  - [Neural Networks And Deep Learning](http://neuralnetworksanddeeplearning.com)  
