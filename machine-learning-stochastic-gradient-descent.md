@@ -10,7 +10,7 @@ Stochastic Gradient Descent
 &emsp;&emsp;如果你想对Neural Networks有一个直观的感受，可以在这里体验一下Neural Networks Classification：  
  - [A Neural Network Playground](http://playground.tensorflow.org)  
 
-&emsp;&emsp;个人推荐先去Rojas的Neural Networks里先了解下Neural Networks的发展，在此之前你得先学习一线Andrew NG的Coursera课程的Linear Regression和Logistic Regression，Neural Networks。Andrew NG的课程有些东西的来由并未说明，这时需要你去拓展，其一是写代码直观感受，其二是Rojas的Neural Networks追本溯源，其三是Michael Nielsen的Neural Networks And Deep Learning一步步优化Neural Networks做[MNIST](http://yann.lecun.com/exdb/mnist/)识别。但是本文不牵扯Neural Networks的一些东西，只说Stochastic Gradient Descent。
+&emsp;&emsp;个人推荐先去Rojas的Neural Networks里先了解下Neural Networks的发展，在此之前你得先学习一下Andrew NG的Coursera课程的Linear Regression和Logistic Regression，Neural Networks。Andrew NG的课程有些东西的来由并未说明，这时需要你去拓展，其一是写代码直观感受，其二是Rojas的Neural Networks追本溯源，其三是Michael Nielsen的Neural Networks And Deep Learning一步步优化Neural Networks做[MNIST](http://yann.lecun.com/exdb/mnist/)识别。但是本文不牵扯Neural Networks的一些东西，只说Stochastic Gradient Descent。
 
 ### Stochastic Gradient Descent
 &emsp;&emsp;就由MSE来做Cost函数，因为简单也易于理解，缺点也很明显，受异常值的影响比较大。  
