@@ -29,3 +29,4 @@ Welcome To Charles's Awsome Blog
  - [Linear Regression(线性回归)](https://github.com/linghuazaii/blog/wiki/Linear-Regression(%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92))
  - [Linear Regression矩阵计算](https://github.com/linghuazaii/blog/wiki/Linear-Regression%E7%9F%A9%E9%98%B5%E8%AE%A1%E7%AE%97)
  - [Andrew NG. Logistic Regression小结与示例](https://github.com/linghuazaii/blog/wiki/Andrew-NG.-Logistic-Regression%E5%B0%8F%E7%BB%93%E4%B8%8E%E7%A4%BA%E4%BE%8B)
+ - [Stochastic Gradient Descent](https://github.com/linghuazaii/blog/wiki/Stochastic-Gradient-Descent)
