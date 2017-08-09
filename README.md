@@ -30,3 +30,4 @@ Welcome To Charles's Awsome Blog
  - [Linear Regression矩阵计算](https://github.com/linghuazaii/blog/wiki/Linear-Regression%E7%9F%A9%E9%98%B5%E8%AE%A1%E7%AE%97)
  - [Andrew NG. Logistic Regression小结与示例](https://github.com/linghuazaii/blog/wiki/Andrew-NG.-Logistic-Regression%E5%B0%8F%E7%BB%93%E4%B8%8E%E7%A4%BA%E4%BE%8B)
  - [Stochastic Gradient Descent](https://github.com/linghuazaii/blog/wiki/Stochastic-Gradient-Descent)
+ - [Neural Networks Backpropagation做MNIST数字识别](https://github.com/linghuazaii/blog/wiki/Neural-Networks-Backpropagation%E5%81%9AMNIST%E6%95%B0%E5%AD%97%E8%AF%86%E5%88%AB)
