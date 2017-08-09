@@ -2,7 +2,7 @@ Neural Networks Backpropagation做MNIST数字识别
 ==============================================
 
 ### Neural Networks
-&emsp;&emsp;不同种属的生物大脑所含有的神经元数量有着显著的不同，一个成年人的大脑约含有850亿~860亿神经元，其中163亿位于大脑皮质，690亿位于小脑。相比而言，[秀丽隐杆线虫线虫](Caenorhabditis elegans)仅仅只有302个神经元，而[黑腹果蝇](https://en.wikipedia.org/wiki/Drosophila_melanogaster)则有约100000神经元，并且能表现出比较复杂的行为。本例所使用的神经元数量大约只有1000个，三层神经网络，只有一层hidden layer。  
+&emsp;&emsp;不同种属的生物大脑所含有的神经元数量有着显著的不同，一个成年人的大脑约含有850亿~860亿神经元，其中163亿位于大脑皮质，690亿位于小脑。相比而言，[秀丽隐杆线虫线虫](https://en.wikipedia.org/wiki/Caenorhabditis_elegans)仅仅只有302个神经元，而[黑腹果蝇](https://en.wikipedia.org/wiki/Drosophila_melanogaster)则有约100000神经元，并且能表现出比较复杂的行为。本例所使用的神经元数量大约只有1000个，三层神经网络，只有一层hidden layer。  
 &emsp;&emsp;对于人的大脑来说，不同的部分之间具有通用性，一个有语言障碍的人，负责语言部分的大脑会适应于其他部分的行为。就好比有的聋哑人视觉会比较好，有的瞎子听觉却比常人更好，其原因就是他们的缺陷导致相应的大脑部位去适应另外的能力。  
 &emsp;&emsp;神经元的行为非常复杂，我们只抽象出我们所能理解的比较简单的一部分，但是Neural Networks的对不同问题领域的适应能力和学习能力还是保留了的。一个神经元简化为树突，对应input，胞体对应`f(x)`，早期Perceptron神经元设计比较简单，`f(x) = b + W*X`，局限性比较大，只能输出`0`和`1`，不过能实现所有的门电路逻辑。后来发展为sigmoid神经元，`f(x) = 1 / (1 + e^-(W*X + b))`，输出是一个平滑的从0到1的S曲线。然后轴突对应output。神经元在输入达到一个阈值的时候才会被激发，这样通过动态调整weights和biases来控制Neural Networks的神经元行为进而学习一个问题领域。下面是一个简单的神经网络，input layer拥有784个神经元，hidden layer有15个神经元，output layer有10个神经元：  
 &emsp;&emsp;<img src='http://neuralnetworksanddeeplearning.com/images/tikz12.png' />  
